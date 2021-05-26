@@ -4,10 +4,11 @@ namespace BlazorLIMS.Data {
 
     public class LabTest {
 
-        public string Name { get; set; }
-
         public readonly double LowValue;
         public readonly double HighValue;
+
+        public string Name { get; set; }
+        public double MeasuredValue { get; set; }
 
         public LabTest(string name, double low, double high) {
 
