@@ -6,8 +6,8 @@ namespace BlazorLIMS.Data {
 
         public readonly double LowValue;
         public readonly double HighValue;
+        public readonly string Name;
 
-        public string Name { get; set; }
         public double MeasuredValue { get; set; }
 
         public LabTest(string name, double low, double high) {
@@ -28,19 +28,19 @@ namespace BlazorLIMS.Data {
 
         }
 
-        public bool IsNormal(double sampleValue) {
+        public bool IsNormal() {
 
-            return (sampleValue >= LowValue && sampleValue <= HighValue);
+            return (MeasuredValue >= LowValue && MeasuredValue <= HighValue);
         }
 
-        public double Percentile(double sampleValue) {
+        public double Percentile() {
 
             if ((HighValue - LowValue) == 0)
             {
                 throw new DivideByZeroException("High value and low value cannot be the same.");
             }
 
-            return (sampleValue - LowValue) / (HighValue - LowValue);
+            return (MeasuredValue - LowValue) / (HighValue - LowValue);
         }
 
     }
