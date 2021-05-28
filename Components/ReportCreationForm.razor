@@ -1,1 +1,67 @@
-<h1>PWSM Lab Receiving</h1>
+@using System;
+@using BlazorLIMS.Data;
+
+<div style="display: flex; flex-direction: column; width: 30%">
+
+<h1 style="margin: 20px">PWSM Lab Receiving</h1>
+
+<select @bind="CreateSampleType" style="margin: 20px">
+    <option value="Plant">Plant</option>
+    <option value="Waste">Waste</option>
+    <option value="Solution">Solution</option>
+    <option value="Media">Media</option>
+</select>
+
+<select @bind="CreateReportType" style="margin: 20px">
+    <option value="Predictive">Predictive</option>
+    <option value="Diagnostic">Diagnostic</option>
+    <option value="Research">Research</option>
+    <option value="Internal">Internal</option>
+    <option value="OutOfState">Out of State</option>
+</select>
+
+<select @bind="CreateSampleCode" style="margin: 20px">
+    @{
+        if (CreateSampleType == "Plant")
+        {
+            Console.WriteLine("Plant menu please");
+            <option value="Apple">Apple</option>
+            foreach(string pCode in Info.PlantCodes)
+            {
+                <option value="@pCode">@pCode</option>
+            }
+        }
+
+        else if (CreateSampleType == "Waste")
+        {
+            Console.WriteLine("Waste menu please");
+            <option value="ALS">ALS - Swine Lagoon Liquid</option>
+        }
+    }
+</select>
+
+<input @bind="CreateNumberOfSamples" type="number" style="margin: 20px; width: 15%">
+
+<button @onclick="PrintDataToConsole" style="margin: 20px">Create Grid</button>
+
+</div>
+
+@code {
+
+    private string CreateReportType = "Predictive";
+    private string CreateSampleType = "Plant";
+    private string CreateSampleCode = "Apple";
+    private int CreateNumberOfSamples = 1;
+    private DateTime CreateReportDate = DateTime.Now;
+
+
+    private void PrintDataToConsole() {
+
+        Console.WriteLine($"Report type: {CreateReportType}");
+        Console.WriteLine($"Sample type: {CreateSampleType}");
+        Console.WriteLine($"Sample code: {CreateSampleCode}");
+        Console.WriteLine($"Number of samples: {CreateNumberOfSamples}");
+        Console.WriteLine($"Date Received: {CreateReportDate}");
+
+    }
+}
