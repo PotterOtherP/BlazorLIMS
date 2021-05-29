@@ -14,8 +14,11 @@ namespace BlazorLIMS {
         public DbSet<ReportModel> SolutionReportModels { get; set; }
         public DbSet<ReportModel> MediaReportModels { get; set; }
 
-        public DbSet<ReportModel> DeletedReportModels { get; set; }
+        public DbSet<SampleModel> PlantSampleModels { get; set; }
+        public DbSet<SampleModel> WasteSampleModels { get; set; }
+        public DbSet<SampleModel> SolutionSampleModels { get; set; }
+        public DbSet<SampleModel> MediaSampleModels { get; set; }
 
-        public DbSet<SampleModel> SampleModels { get; set; }
+        public DbSet<ReportModel> DeletedReportModels { get; set; }
     }
 }

@@ -16,8 +16,13 @@ namespace BlazorLIMS.Data {
         public string SampleTypeLetter { get; set; }
 
         public string ReportType { get; set; }
+
+        // True when all tests have measurements
         public bool IsComplete { get; set; }
         public bool IsDeleted { get; set; }
+
+        // can't delete report if true
+        public bool IsFinalized { get; set; }
 
         public DateTime DateReceived { get; set; }
 

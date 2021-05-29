@@ -24,8 +24,6 @@
     @{
         if (CreateSampleType == "Plant")
         {
-            Console.WriteLine("Plant menu please");
-            <option value="Apple">Apple</option>
             foreach(string pCode in Info.PlantCodes)
             {
                 <option value="@pCode">@pCode</option>
@@ -34,13 +32,33 @@
 
         else if (CreateSampleType == "Waste")
         {
-            Console.WriteLine("Waste menu please");
-            <option value="ALS">ALS - Swine Lagoon Liquid</option>
+            foreach(string wCode in Info.WasteCodes)
+            {
+                <option value="@wCode">@wCode</option>
+            }
+        }
+
+        else if (CreateSampleType == "Solution")
+        {
+            foreach(string sCode in Info.SolutionCodes)
+            {
+                <option value="@sCode">@sCode</option>
+            }
+        }
+
+        else if (CreateSampleType == "Media")
+        {
+            foreach(string mCode in Info.MediaCodes)
+            {
+                <option value="@mCode">@mCode</option>
+            }
         }
     }
 </select>
 
 <input @bind="CreateNumberOfSamples" type="number" style="margin: 20px; width: 15%">
+
+<input @bind="CreateReportDate" type="date" style="margin: 20px; width: 35%">
 
 <button @onclick="PrintDataToConsole" style="margin: 20px">Create Grid</button>
 
@@ -50,9 +68,28 @@
 
     private string CreateReportType = "Predictive";
     private string CreateSampleType = "Plant";
-    private string CreateSampleCode = "Apple";
+    private string CreateSampleCode = Info.PlantCodes[0];
     private int CreateNumberOfSamples = 1;
     private DateTime CreateReportDate = DateTime.Now;
+
+    private ReportModel Report;
+
+    private void CreateReportFromForm() {
+
+        Report = new ReportModel();
+
+        // Get next report number and sample numbers from database
+
+        Report.ReportType = CreateReportType;
+        Report.SampleType = CreateSampleType;
+        Report.SampleTypeLetter = CreateSampleType.Substring(0,1);
+        Report.DateReceived = CreateReportDate;
+        Report.IsComplete = false;
+        Report.IsDeleted = false;
+
+
+
+    }
 
 
     private void PrintDataToConsole() {
