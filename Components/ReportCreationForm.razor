@@ -60,7 +60,7 @@
 
 <input @bind="CreateReportDate" type="date" style="margin: 20px; width: 35%">
 
-<button @onclick="PrintDataToConsole" style="margin: 20px">Create Grid</button>
+<button @onclick="CreateReportFromForm" style="margin: 20px">Create Grid</button>
 
 </div>
 
@@ -72,32 +72,37 @@
     private int CreateNumberOfSamples = 1;
     private DateTime CreateReportDate = DateTime.Now;
 
-    private ReportModel Report;
+    [Parameter]
+    public ReportModel CreatedReport { get; set; }
 
-    private void CreateReportFromForm() {
+    [Parameter]
+    public EventCallback OnClickCallback { get; set; }
 
-        Report = new ReportModel();
+    private async void CreateReportFromForm() {
 
         // Get next report number and sample numbers from database
-
-        Report.ReportType = CreateReportType;
-        Report.SampleType = CreateSampleType;
-        Report.DateReceived = CreateReportDate;
-        Report.IsComplete = false;
-        Report.IsDeleted = false;
+        // CreatedReport.LabReportId = ;
+        // int nextSampleId = ;
+        int nextSampleId = 1001;
 
 
+        CreatedReport.SampleType = CreateSampleType;
+        CreatedReport.ReportType = CreateReportType;
+        CreatedReport.IsComplete = false;
+        CreatedReport.IsDeleted = false;
+        CreatedReport.DateReceived = CreateReportDate;
+        CreatedReport.Samples = new List<SampleModel>();
 
-    }
+        for (int i = 0; i < CreateNumberOfSamples; ++i)
+        {
+            var s = new SampleModel();
+            s.LabId = nextSampleId + i;
+            s.SampleType = CreateSampleType;
+            s.SampleCode = CreateSampleCode;
+            CreatedReport.Samples.Add(s);
+        }
 
-
-    private void PrintDataToConsole() {
-
-        Console.WriteLine($"Report type: {CreateReportType}");
-        Console.WriteLine($"Sample type: {CreateSampleType}");
-        Console.WriteLine($"Sample code: {CreateSampleCode}");
-        Console.WriteLine($"Number of samples: {CreateNumberOfSamples}");
-        Console.WriteLine($"Date Received: {CreateReportDate}");
+        await OnClickCallback.InvokeAsync();
 
     }
 }

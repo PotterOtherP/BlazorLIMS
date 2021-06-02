@@ -2,13 +2,36 @@
 
 @using System;
 @using BlazorLIMS.Components;
+@using BlazorLIMS.Data;
 
-<ReportCreationForm />
+<ReportCreationForm CreatedReport=@Report OnClickCallback="@CreateGrid"/>
 
+@if (Report != null && Report.Samples != null)
+{
+    <h5>@Report.SampleType</h5>
+    <h5>@Report.ReportType</h5>
+
+    foreach(SampleModel sample in @Report.Samples)
+    {
+        <p>Sample ID: @sample.LabId</p>
+    }
+
+}
 
 @code {
 
+    private ReportModel Report = new ReportModel();
+    
 
+
+    private void CreateGrid() {
+
+        Console.WriteLine("CreateGrid() called.");
+
+        Console.WriteLine($"Report type: {Report.ReportType}");
+        Console.WriteLine($"Sample type: {Report.SampleType}");
+        Console.WriteLine($"Date Received: {Report.DateReceived}");
+    }
 
 
 }
