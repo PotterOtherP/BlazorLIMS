@@ -5,6 +5,10 @@ namespace BlazorLIMS {
 
     public class PWSMDbContext : DbContext {
 
+        public PWSMDbContext() {
+            
+        }
+
         public PWSMDbContext (DbContextOptions<PWSMDbContext> options) : base(options) {
 
         }
@@ -20,5 +24,10 @@ namespace BlazorLIMS {
         public DbSet<SampleModel> MediaSampleModels { get; set; }
 
         public DbSet<ReportModel> DeletedReportModels { get; set; }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            optionsBuilder.UseSqlite("Data Source=PWSMDatabase.db");
+        }
     }
 }

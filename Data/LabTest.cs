@@ -4,29 +4,13 @@ namespace BlazorLIMS.Data {
 
     public class LabTest {
 
-        public readonly double LowValue;
-        public readonly double HighValue;
-        public readonly string Name;
+        public int Id { get; set; }
+
+        public string Name { get; set; }
+        public double LowValue { get; set; }
+        public double HighValue { get; set; }
 
         public double MeasuredValue { get; set; }
-
-        public LabTest(string name, double low, double high) {
-
-            if (high <= low)
-            {
-                throw new ArgumentException("High value must be greater than low value.");
-            }
-
-            if (high < 0 || low < 0)
-            {
-                throw new ArgumentException("Test threshold values cannot be negative.");
-            }
-
-            Name = name;
-            LowValue = low;
-            HighValue = high;
-
-        }
 
         public bool IsNormal() {
 
