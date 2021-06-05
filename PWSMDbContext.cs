@@ -25,6 +25,8 @@ namespace BlazorLIMS {
 
         public DbSet<ReportModel> DeletedReportModels { get; set; }
 
+        public DbSet<LabTestData> TestDataTable { get; set; }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseSqlite("Data Source=PWSMDatabase.db");

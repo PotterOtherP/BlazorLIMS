@@ -19,7 +19,7 @@ namespace BlazorLIMS.Data
 
         public bool IsDeleted { get; set; }
 
-        public List<LabTest> AssignedTests { get; set; }
+        public List<SampleTest> AssignedTests { get; set; }
 
         // Navigation properties
         [Required]
