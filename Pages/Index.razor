@@ -31,7 +31,10 @@
         Console.WriteLine($"Report type: {Report.ReportType}");
         Console.WriteLine($"Sample type: {Report.SampleType}");
         Console.WriteLine($"Date Received: {Report.DateReceived}");
-    }
 
+        Console.WriteLine($"Report number: {Report.LabReportId}");
+        Console.WriteLine($"Sample number: {Report.Samples[0].LabId}");
+
+    }
 
 }

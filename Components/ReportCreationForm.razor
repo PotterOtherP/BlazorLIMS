@@ -1,5 +1,6 @@
 @using System;
 @using BlazorLIMS.Data;
+@using Microsoft.EntityFrameworkCore;
 
 <div style="display: flex; flex-direction: column; width: 30%">
 
@@ -72,6 +73,12 @@
     private int CreateNumberOfSamples = 1;
     private DateTime CreateReportDate = DateTime.Now;
 
+    private int NextReportNumber = 0;
+    private int NextSampleNumber = 0;
+
+    private readonly int INIT_SAMPLE_NUMBER = 1001;
+    private readonly int INIT_REPORT_NUMBER = 101;
+
     [Parameter]
     public ReportModel CreatedReport { get; set; }
 
@@ -81,11 +88,9 @@
     private async void CreateReportFromForm() {
 
         // Get next report number and sample numbers from database
-        // CreatedReport.LabReportId = ;
-        // int nextSampleId = ;
-        int nextSampleId = 1001;
+        GetNextNumbers();
 
-
+        CreatedReport.LabReportId = NextReportNumber;
         CreatedReport.SampleType = CreateSampleType;
         CreatedReport.ReportType = CreateReportType;
         CreatedReport.IsComplete = false;
@@ -96,7 +101,7 @@
         for (int i = 0; i < CreateNumberOfSamples; ++i)
         {
             var s = new SampleModel();
-            s.LabId = nextSampleId + i;
+            s.LabId = NextSampleNumber + i;
             s.SampleType = CreateSampleType;
             s.SampleCode = CreateSampleCode;
             CreatedReport.Samples.Add(s);
@@ -104,5 +109,43 @@
 
         await OnClickCallback.InvokeAsync();
 
+    }
+
+    private void GetNextNumbers() {
+
+        using (var context = new PWSMDbContext())
+        {
+            switch (CreateSampleType)
+            {
+                case "Plant":
+                {
+                    NextReportNumber = context.PlantReportModels.Count();
+                    NextSampleNumber = context.PlantSampleModels.Count();
+                } break;
+
+                case "Waste":
+                {
+                    NextReportNumber = context.WasteReportModels.Count();
+                    NextSampleNumber = context.WasteSampleModels.Count();
+                } break;
+
+                case "Solution":
+                {
+                    NextReportNumber = context.SolutionReportModels.Count();
+                    NextSampleNumber = context.SolutionSampleModels.Count();
+                } break;
+
+                case "Media":
+                {
+                    NextReportNumber = context.MediaReportModels.Count();
+                    NextSampleNumber = context.MediaSampleModels.Count();
+                } break;
+
+                default: {} break;
+            }
+        }
+
+        NextReportNumber += INIT_REPORT_NUMBER;
+        NextSampleNumber += INIT_SAMPLE_NUMBER;
     }
 }
