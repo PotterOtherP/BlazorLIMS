@@ -1,11 +1,13 @@
+@using BlazorLIMS.Data;
+
 <tr>
-    <th>@ShortName</th>
-    <th>@LongName</th>
+    <th>@Name</th>
     <th>@SampleCode</th>
     <th>@DefaultAssigned</th>
     <th>@LowValue</th>
     <th>@HighValue</th>
     <th>@Units</th>
+    @* <th><button @onclick="@DuplicateRow">Duplicate</button></th> *@
     <th><button @onclick="@DeleteRow">Delete</button></th>
 </tr>
 
@@ -15,10 +17,7 @@
     public int DatabaseId { get; set; }
 
     [Parameter]
-    public string ShortName { get; set; }
-
-    [Parameter]
-    public string LongName { get; set; }
+    public string Name { get; set; }
 
     [Parameter]
     public string SampleCode { get; set; }
@@ -56,6 +55,26 @@
             {
                 Console.WriteLine(ex.Message);
             }
+        }
+
+        await RenderParent.InvokeAsync();
+    }
+
+    private async void DuplicateRow() {
+
+        var newRow = new LabTestData();
+
+        newRow.Name = this.Name;
+        newRow.SampleCode = this.SampleCode;
+        newRow.DefaultAssigned = (this.DefaultAssigned == "Yes" ? true : false);
+        newRow.LowValue = this.LowValue;
+        newRow.HighValue = this.HighValue;
+        newRow.Units = this.Units;
+
+        using (var context = new PWSMDbContext())
+        {
+            await context.TestDataTable.AddAsync(newRow);
+            await context.SaveChangesAsync();
         }
 
         await RenderParent.InvokeAsync();

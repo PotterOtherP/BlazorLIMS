@@ -170,7 +170,27 @@ namespace BlazorLIMS.Data {
 
         };
 
+        public static readonly string[] AllTests = {
 
+            "Biomass",
+            "Bulk Density",
+            "C (Carbon)",
+            "CBC (Carb/Bicarb)",
+            "CCE (Lime Equivalence)",
+            "Cl (Chloride)",
+            "DM% (Dry Matter)",
+            "DW (Dry Weight)",
+            "EC (Electrical Conductivity)",
+            "HM (Heavy Metals)",
+            "ICP (Spectroscopy)",
+            "Mo (Molybdenum)",
+            "N (Nitrogen)",
+            "NH4/NO3 (Nitrogen breakout)",
+            "NO3 (Nitrate)",
+            "pH",
+            "TKN (Total Kjeldahl Nitrogen)",
+            "Urea"
+        };
 
 
     }

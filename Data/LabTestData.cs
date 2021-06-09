@@ -4,8 +4,7 @@ namespace BlazorLIMS.Data {
 
         public int Id { get; set; }
 
-        public string ShortName { get; set; }
-        public string LongName { get; set; }
+        public string Name { get; set; }
         public string SampleCode { get; set; }
         public bool DefaultAssigned { get; set; }
 

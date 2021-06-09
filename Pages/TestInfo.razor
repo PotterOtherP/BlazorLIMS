@@ -9,7 +9,6 @@
     <thead>
         <tr>
             <th>Test</th>
-            <th>Long name</th>
             <th>Sample code</th>
             <th>Default</th>
             <th>Low</th>
@@ -20,9 +19,35 @@
     </thead>
     <tbody>
         <tr>
-            <th><input type="text" @bind="CreateShortName"></th>
-            <th><input type="text" @bind="CreateLongName"></th>
-            <th><input type="text" @bind="CreateSampleCode"></th>
+            <th>
+                <select @bind="CreateName">
+                    @foreach (var item in Info.AllTests)
+                    {
+                        <option value="@item">@item</option>
+                    }
+                </select>
+            </th>
+            <th>
+                <select @bind="CreateSampleCode">
+                    @foreach (var item in Info.PlantCodes)
+                    {
+                        <option value="@item">@item</option>
+                    }
+                    @foreach (var item in Info.WasteCodes)
+                    {
+                        <option value="@item">@item</option>
+                    }
+                    @foreach (var item in Info.SolutionCodes)
+                    {
+                        <option value="@item">@item</option>
+                    }
+                    @foreach (var item in Info.MediaCodes)
+                    {
+                        <option value="@item">@item</option>
+                    }
+                </select>
+            </th>
+
             <th>
                 <select @bind="CreateDefault">
                     <option value="No">No</option>        
@@ -32,7 +57,7 @@
             <th><input type="number" step=".01" @bind="CreateLow"></th>
             <th><input type="number" step=".01" @bind="CreateHigh"></th>
             <th><input type="text" @bind="CreateUnits"></th>
-            <th><button @onclick="CreateTestData">Add New</button></th>
+            <th><button @onclick="CreateTestData">Add</button></th>
 
 
         </tr>
@@ -53,8 +78,7 @@
 
                 <TestDataRow
                 DatabaseId=@test.Id
-                ShortName=@test.ShortName
-                LongName=@test.LongName
+                Name=@test.Name
                 SampleCode=@test.SampleCode
                 DefaultAssigned=@assigned
                 LowValue=@test.LowValue
@@ -73,13 +97,12 @@
 
     private IList<LabTestData> TestDatas;
 
-    private string CreateShortName;
-    private string CreateLongName;
-    private string CreateSampleCode;
-    private string CreateDefault;
-    private double CreateLow;
-    private double CreateHigh;
-    private string CreateUnits;
+    private string CreateName = Info.AllTests[0];
+    private string CreateSampleCode = Info.PlantCodes[0];
+    private string CreateDefault = "No";
+    private double CreateLow = 0.0;
+    private double CreateHigh = 0.0;
+    private string CreateUnits = "";
 
     private async void CreateTestData() {
 
@@ -88,8 +111,7 @@
             try
             {
                 var newTestData = new LabTestData();
-                newTestData.ShortName = CreateShortName;
-                newTestData.LongName = CreateLongName;
+                newTestData.Name = CreateName;
                 newTestData.SampleCode = CreateSampleCode;
                 
                 newTestData.DefaultAssigned = false;
@@ -100,6 +122,8 @@
                 newTestData.LowValue = CreateLow;
                 newTestData.HighValue = CreateHigh;
                 newTestData.Units = CreateUnits;
+ 
+                Console.WriteLine(newTestData.Name);
 
                 context.TestDataTable.Add(newTestData);
                 await context.SaveChangesAsync();
@@ -107,6 +131,7 @@
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
+                
             }
         }
 
@@ -114,6 +139,7 @@
     }
 
     protected override async Task OnInitializedAsync() {
+
 
         using (var context = new PWSMDbContext())
         {
@@ -127,4 +153,6 @@
             }
         }
     }
+
+
 }
