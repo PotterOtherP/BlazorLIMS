@@ -1,0 +1,63 @@
+<tr>
+    <th>@ShortName</th>
+    <th>@LongName</th>
+    <th>@SampleCode</th>
+    <th>@DefaultAssigned</th>
+    <th>@LowValue</th>
+    <th>@HighValue</th>
+    <th>@Units</th>
+    <th><button @onclick="@DeleteRow">Delete</button></th>
+</tr>
+
+@code {
+
+    [Parameter]
+    public int DatabaseId { get; set; }
+
+    [Parameter]
+    public string ShortName { get; set; }
+
+    [Parameter]
+    public string LongName { get; set; }
+
+    [Parameter]
+    public string SampleCode { get; set; }
+
+    [Parameter]
+    public string DefaultAssigned { get; set; }
+
+    [Parameter]
+    public string Units { get; set; }
+
+    [Parameter]
+    public double LowValue { get; set; }
+ 
+    [Parameter]
+    public double HighValue { get; set; }
+
+    [Parameter]
+    public EventCallback RenderParent { get; set; }
+
+    private async void DeleteRow() {
+
+        using (var context = new PWSMDbContext())
+        {
+            try {
+
+                var RowToDelete = await context.TestDataTable.FindAsync(DatabaseId);
+
+                if (RowToDelete != null)
+                {
+                    context.TestDataTable.Remove(RowToDelete);
+                    await context.SaveChangesAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+        }
+
+        await RenderParent.InvokeAsync();
+    }
+}
