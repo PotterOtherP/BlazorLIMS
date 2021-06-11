@@ -1,8 +1,8 @@
 {
   "ExpandedNodes": [
     "",
-    "\\Components"
+    "\\Pages"
   ],
-  "SelectedNode": "\\Components\\ReportCreationForm.razor",
+  "SelectedNode": "\\Pages\\Index.razor",
   "PreviewInSolutionExplorer": false
 }

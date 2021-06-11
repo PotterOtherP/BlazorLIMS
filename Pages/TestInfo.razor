@@ -5,11 +5,14 @@
 @using BlazorLIMS.Components;
 @using System;
 
+<button @onclick="PrintInfoToConsole">Info</button>
+<button @onclick="DeleteAllRows">Delete Everything</button>
+
 <table class="table">
     <thead>
         <tr>
-            <th>Test</th>
             <th>Sample code</th>
+            <th>Test</th>
             <th>Default</th>
             <th>Low</th>
             <th>High</th>
@@ -19,14 +22,6 @@
     </thead>
     <tbody>
         <tr>
-            <th>
-                <select @bind="CreateName">
-                    @foreach (var item in Info.AllTests)
-                    {
-                        <option value="@item">@item</option>
-                    }
-                </select>
-            </th>
             <th>
                 <select @bind="CreateSampleCode">
                     @foreach (var item in Info.PlantCodes)
@@ -47,17 +42,28 @@
                     }
                 </select>
             </th>
-
+            <th>
+                <select @bind="CreateName">
+                    @foreach (var item in Info.AllTests)
+                    {
+                        <option value="@item">@item</option>
+                    }
+                    @foreach (var item in Info.ICPTests)
+                    {
+                        <option value="@item">@item</option>
+                    }
+                </select>
+            </th>
             <th>
                 <select @bind="CreateDefault">
                     <option value="No">No</option>        
                     <option value="Yes">Yes</option>        
                 </select>
             </th>
-            <th><input type="number" step=".01" @bind="CreateLow"></th>
-            <th><input type="number" step=".01" @bind="CreateHigh"></th>
+            <th><input type="number" step=".1" @bind="CreateLow"></th>
+            <th><input type="number" step=".1" @bind="CreateHigh"></th>
             <th><input type="text" @bind="CreateUnits"></th>
-            <th><button @onclick="CreateTestData">Add</button></th>
+            <th><button @onclick="CreateRow">Add</button></th>
 
 
         </tr>
@@ -78,8 +84,8 @@
 
                 <TestDataRow
                 DatabaseId=@test.Id
-                Name=@test.Name
                 SampleCode=@test.SampleCode
+                Name=@test.Name
                 DefaultAssigned=@assigned
                 LowValue=@test.LowValue
                 HighValue=@test.HighValue
@@ -95,19 +101,37 @@
 
 @code {
 
+    private readonly int MAX_TABLE_SIZE = 10000;
+
     private IList<LabTestData> TestDatas;
 
-    private string CreateName = Info.AllTests[0];
-    private string CreateSampleCode = Info.PlantCodes[0];
+    private string CreateName = "";
+    private string CreateSampleCode = "";
     private string CreateDefault = "No";
     private double CreateLow = 0.0;
-    private double CreateHigh = 0.0;
-    private string CreateUnits = "";
+    private double CreateHigh = 100.0;
+    private string CreateUnits = "%";
 
-    private async void CreateTestData() {
+
+    private async void CreateAllDefaultTests() {
+
+        PrintInfoToConsole();
+        DeleteAllRows();
+
+        await OnInitializedAsync();
+    }
+
+    private async void CreateRow() {
 
         using (var context = new PWSMDbContext())
         {
+            var count = await context.TestDataTable.CountAsync();
+            if (count >= MAX_TABLE_SIZE)
+            {
+                Console.WriteLine("Test data table is too big.");
+                return;
+            }
+
             try
             {
                 var newTestData = new LabTestData();
@@ -123,8 +147,6 @@
                 newTestData.HighValue = CreateHigh;
                 newTestData.Units = CreateUnits;
  
-                Console.WriteLine(newTestData.Name);
-
                 context.TestDataTable.Add(newTestData);
                 await context.SaveChangesAsync();
             }
@@ -138,8 +160,32 @@
         await OnInitializedAsync();
     }
 
-    protected override async Task OnInitializedAsync() {
+    private async void DeleteAllRows() {
 
+        using (var context = new PWSMDbContext())
+        {
+            while (TestDatas.Count > 0)
+            {
+                try
+                {
+                    var RowToDelete = await context.TestDataTable.FindAsync(TestDatas[0].Id);
+                    context.TestDataTable.Remove(RowToDelete);
+                    await context.SaveChangesAsync();
+                    TestDatas = await context.TestDataTable.ToListAsync();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                    break;
+                }
+
+            }
+        }
+
+        await OnInitializedAsync();
+    }
+
+    protected override async Task OnInitializedAsync() {
 
         using (var context = new PWSMDbContext())
         {
@@ -152,6 +198,25 @@
                 Console.WriteLine(ex.Message);
             }
         }
+    }
+
+    private void PrintInfoToConsole() {
+
+        int plantCount = Info.PlantCodes.Count();
+        int wasteCount = Info.WasteCodes.Count();
+        int solutionCount = Info.SolutionCodes.Count();
+        int mediaCount = Info.MediaCodes.Count();
+        int totalCodeCount = plantCount + wasteCount + solutionCount + mediaCount;
+
+        Console.Write($"There are {totalCodeCount} total sample types: ");
+        Console.WriteLine($"{plantCount} plant, {wasteCount} waste, {solutionCount} solution, "
+          + $" and {mediaCount} media.");
+
+        int testCount = Info.AllTests.Count() + Info.ICPTests.Count();
+
+        Console.WriteLine($"There are {testCount} total tests.");
+
+        Console.WriteLine($"For a total of {testCount * totalCodeCount} entries in the table.");
     }
 
 
