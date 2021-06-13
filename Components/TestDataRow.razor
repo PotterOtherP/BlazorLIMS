@@ -1,14 +1,15 @@
 @using BlazorLIMS.Data;
+@using System;
 
-<tr>
+<tr style="background-color: @BGColor">
     <th>@SampleCode</th>
     <th>@Name</th>
     <th>@DefaultAssigned</th>
-    <th>@LowValue</th>
+    <th><input type="number" step="0.1" value="@LowValue"
+        @onchange="(ui) => UpdateLowValue(Convert.ToDouble(ui.Value))">
+    </th>
     <th>@HighValue</th>
     <th>@Units</th>
-    @* <th><button @onclick="@DuplicateRow">Duplicate</button></th> *@
-    <th><button @onclick="@DeleteRow">Delete</button></th>
 </tr>
 
 @code {
@@ -37,11 +38,38 @@
     [Parameter]
     public EventCallback RenderParent { get; set; }
 
+    [Parameter]
+    public string BGColor { get; set; }
+
+    private async void UpdateLowValue(double value) {
+
+        using (var context = new PWSMDbContext())
+        {
+            try
+            {
+                var RowToUpdate = await context.TestDataTable.FindAsync(DatabaseId);
+
+                if (RowToUpdate != null)
+                {
+                    RowToUpdate.LowValue = value;
+                    await context.SaveChangesAsync();
+                    Console.WriteLine($"Changed low value of item {DatabaseId} to {value}");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+        }
+
+    }
+
     private async void DeleteRow() {
 
         using (var context = new PWSMDbContext())
         {
-            try {
+            try
+            {
 
                 var RowToDelete = await context.TestDataTable.FindAsync(DatabaseId);
 

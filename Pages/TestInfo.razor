@@ -5,11 +5,14 @@
 @using BlazorLIMS.Components;
 @using System;
 
-<button @onclick="PrintInfoToConsole">Info</button>
-<button @onclick="DeleteAllRows">Delete Everything</button>
-
 <table class="table">
     <thead>
+        @* <tr> *@
+            @* <th><button @onclick="PrintInfoToConsole">Info</button></th> *@
+            @* <th><button @onclick="DeleteAllRows">Delete Everything</button></th> *@
+            @* <th><button @onclick="CreateEverything">Create Everything</button></th> *@
+            @* <th>Total rows: @TestDatas.Count</th> *@
+        @* </tr> *@
         <tr>
             <th>Sample code</th>
             <th>Test</th>
@@ -17,57 +20,11 @@
             <th>Low</th>
             <th>High</th>
             <th>Units</th>
-            <th></th>
+            <th>Total rows: @TestDatas.Count</th>
         </tr>
     </thead>
     <tbody>
-        <tr>
-            <th>
-                <select @bind="CreateSampleCode">
-                    @foreach (var item in Info.PlantCodes)
-                    {
-                        <option value="@item">@item</option>
-                    }
-                    @foreach (var item in Info.WasteCodes)
-                    {
-                        <option value="@item">@item</option>
-                    }
-                    @foreach (var item in Info.SolutionCodes)
-                    {
-                        <option value="@item">@item</option>
-                    }
-                    @foreach (var item in Info.MediaCodes)
-                    {
-                        <option value="@item">@item</option>
-                    }
-                </select>
-            </th>
-            <th>
-                <select @bind="CreateName">
-                    @foreach (var item in Info.AllTests)
-                    {
-                        <option value="@item">@item</option>
-                    }
-                    @foreach (var item in Info.ICPTests)
-                    {
-                        <option value="@item">@item</option>
-                    }
-                </select>
-            </th>
-            <th>
-                <select @bind="CreateDefault">
-                    <option value="No">No</option>        
-                    <option value="Yes">Yes</option>        
-                </select>
-            </th>
-            <th><input type="number" step=".1" @bind="CreateLow"></th>
-            <th><input type="number" step=".1" @bind="CreateHigh"></th>
-            <th><input type="text" @bind="CreateUnits"></th>
-            <th><button @onclick="CreateRow">Add</button></th>
-
-
-        </tr>
-
+        
         @if (TestDatas == null)
         {
             <p><em>Loading...</em></p>
@@ -82,6 +39,10 @@
                     assigned = "Yes";
                 }
 
+                var color = "#cccccc";
+                if (TestDatas.IndexOf(test) %2 == 0)
+                    color = "#eeeeee";
+
                 <TestDataRow
                 DatabaseId=@test.Id
                 SampleCode=@test.SampleCode
@@ -91,6 +52,7 @@
                 HighValue=@test.HighValue
                 Units=@test.Units
                 RenderParent="@OnInitializedAsync"
+                BGColor=@color
                 />
             }
         }
@@ -112,13 +74,264 @@
     private double CreateHigh = 100.0;
     private string CreateUnits = "%";
 
+    private void AddICPTests(string sampleCode, PWSMDbContext context) {
 
-    private async void CreateAllDefaultTests() {
+        foreach (var test in Info.ICPTests)
+        {
+            CreateName = test;
+            CreateSampleCode = sampleCode;
+            CreateDefault = "Yes";
+            CreateRow(context);
+        }
+    }
+
+    private async void CreateEverything() {
 
         PrintInfoToConsole();
+
         DeleteAllRows();
+        Console.WriteLine("All previous entries deleted.");
+
+        string[] PlantsWithMo = {
+
+            "Alfalfa",
+            "Broccoli",
+            "Cabbage",
+            "Cauliflower",
+            "Collards",
+            "Kale",
+            "Kohlrabi",
+            "Poinsettia",
+            "Spinach"
+
+        };
+
+        string[] PlantsWithNO3 = {
+
+            "Cotton",
+            "Strawberry"
+
+        };
+
+        string[] WasteWithExtra = {
+
+            "BCO - Biosolids, composted",
+            "BIX - Biosolids, mixed",
+            "CSW - Wood ash",
+            "CSC - Coal ash",
+            "FCD - Composted manure - Dairy",
+            "FCP - Composted manure - Poultry",
+            "FCS - Composted manure - Swine",
+            "FCW - Compost, plant material",
+            "FCV - Vermicompost",
+            "IOC - Paper fiber/pulp",
+            "IOL - Lime by-products",
+            "NBS - Wood waste/sawdust",
+            "NCR - Raw plant material/crop residues",
+            "NSF - Food/beverage by-products (solid)",
+            "NSO - Non-composted solid"
+
+        };
+
+        using (var context = new PWSMDbContext())
+        {
+            // Create every kind of test for every kind of sample
+
+            foreach (var plantCode in Info.PlantCodes)
+            {
+                Console.WriteLine($"{plantCode}...");
+                foreach (var testName in Info.AllTests)
+                {
+                    CreateName = testName;
+                    CreateSampleCode = plantCode;
+                    CreateDefault = "No";
+
+                    if (testName.Equals("N"))
+                        CreateDefault = "Yes";
+
+                    if (testName.Equals("Mo") && Array.IndexOf(PlantsWithMo, plantCode) >= 0)
+                        CreateDefault = "Yes";
+
+                    if (testName.Equals("NO3") && Array.IndexOf(PlantsWithNO3, plantCode) >= 0)
+                        CreateDefault = "Yes";
+
+                    CreateRow(context);
+                }
+
+                AddICPTests(plantCode, context);
+            }
+
+
+            // Liquid waste gets ICP, TKN, pH
+            foreach (var wasteCode in Info.WasteCodesLiquid)
+            {
+                Console.WriteLine($"{wasteCode}...");
+
+                foreach (var testName in Info.AllTests)
+                {
+                    CreateName = testName;
+                    CreateSampleCode = wasteCode;
+                    CreateDefault = "No";
+
+                    if (testName.Equals("pH"))
+                        CreateDefault = "Yes";
+
+                    if (testName.Equals("TKN"))
+                        CreateDefault = "Yes";
+
+                    if (testName.Equals("EC") && wasteCode.Equals("NLF - Food/beverage by-products (liquid)"))
+                        CreateDefault = "Yes";
+
+                    if (testName.Equals("EC") && wasteCode.Equals("NLO - Non-composted liquid"))
+                        CreateDefault = "Yes";
+
+                    CreateRow(context);
+                }
+
+                AddICPTests(wasteCode, context);
+            }
+
+            // Solid waste gets ICP, DM, N
+            // Compost and industrial get C, pH, EC. Lime gets CCE
+            foreach (var wasteCode in Info.WasteCodesSolid)
+            {
+                Console.WriteLine($"{wasteCode}...");
+
+                foreach (var testName in Info.AllTests)
+                {
+                    CreateName = testName;
+                    CreateSampleCode = wasteCode;
+                    CreateDefault = "No";
+
+                    if (testName.Equals("DM"))
+                        CreateDefault = "Yes";
+
+                    if (testName.Equals("N"))
+                        CreateDefault = "Yes";
+
+                    if (testName.Equals("C") && Array.IndexOf(WasteWithExtra, wasteCode) >= 0)
+                        CreateDefault = "Yes";
+
+                    if (testName.Equals("pH") && Array.IndexOf(WasteWithExtra, wasteCode) >= 0)
+                        CreateDefault = "Yes";
+
+                    if (testName.Equals("EC") && Array.IndexOf(WasteWithExtra, wasteCode) >= 0)
+                        CreateDefault = "Yes";
+
+                    if (wasteCode.Equals("IOL - Lime by-products"))
+                    {
+                        if (testName.Equals("CCE"))
+                            CreateDefault = "Yes";
+                        if (testName.Equals("C"))
+                            CreateDefault = "No";
+                    }
+
+                    CreateRow(context);
+                }
+
+                AddICPTests(wasteCode, context);
+            }
+
+
+            // Solutions get ICP, CBC, NH4/NO3, Cl, pH, EC
+            foreach (var solutionCode in Info.SolutionCodes)
+            {
+                Console.WriteLine($"{solutionCode}...");
+
+                foreach(var testName in Info.AllTests)
+                {
+                    CreateName = testName;
+                    CreateSampleCode = solutionCode;
+                    CreateDefault = "No";
+
+                    if (testName.Equals("CBC"))
+                        CreateDefault = "Yes";
+
+                    if (testName.Equals("NH4/NO3"))
+                        CreateDefault = "Yes";
+
+                    if (testName.Equals("Cl"))
+                        CreateDefault = "Yes";
+
+                    if (testName.Equals("pH"))
+                        CreateDefault = "Yes";
+
+                    if (testName.Equals("EC"))
+                        CreateDefault = "Yes";
+
+                    CreateRow(context);
+                }
+
+                AddICPTests(solutionCode, context);
+            }
+            
+
+            // Media gets ICP, pH, EC, NH4/NO3
+            foreach (var mediaCode in Info.MediaCodes)
+            {
+                Console.WriteLine($"{mediaCode}...");
+
+                foreach(var testName in Info.AllTests)
+                {
+                    CreateName = testName;
+                    CreateSampleCode = mediaCode;
+                    CreateDefault = "No";
+
+                    if (testName.Equals("NH4/NO3"))
+                        CreateDefault = "Yes";
+
+                    if (testName.Equals("pH"))
+                        CreateDefault = "Yes";
+
+                    if (testName.Equals("EC"))
+                        CreateDefault = "Yes";
+
+                    CreateRow(context);
+                }
+
+                AddICPTests(mediaCode, context);
+            }
+
+        }
 
         await OnInitializedAsync();
+
+        Console.WriteLine("Process complete.");
+    }
+
+    private async void CreateRow(PWSMDbContext context) {
+
+        var count = await context.TestDataTable.CountAsync();
+        if (count >= MAX_TABLE_SIZE)
+        {
+            Console.WriteLine("Test data table is too big.");
+            return;
+        }
+
+        try
+        {
+            var newTestData = new LabTestData();
+            newTestData.Name = CreateName;
+            newTestData.SampleCode = CreateSampleCode;
+            
+            newTestData.DefaultAssigned = false;
+            if (CreateDefault.Equals("Yes"))
+            {
+                newTestData.DefaultAssigned = true;
+            }
+            newTestData.LowValue = CreateLow;
+            newTestData.HighValue = CreateHigh;
+            newTestData.Units = CreateUnits;
+
+            context.TestDataTable.Add(newTestData);
+            await context.SaveChangesAsync();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+            
+        }
+
     }
 
     private async void CreateRow() {
@@ -210,7 +423,7 @@
 
         Console.Write($"There are {totalCodeCount} total sample types: ");
         Console.WriteLine($"{plantCount} plant, {wasteCount} waste, {solutionCount} solution, "
-          + $" and {mediaCount} media.");
+          + $"and {mediaCount} media.");
 
         int testCount = Info.AllTests.Count() + Info.ICPTests.Count();
 
