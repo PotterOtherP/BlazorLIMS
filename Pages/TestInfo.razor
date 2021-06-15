@@ -7,20 +7,39 @@
 
 <table class="table">
     <thead>
-        @* <tr> *@
-            @* <th><button @onclick="PrintInfoToConsole">Info</button></th> *@
-            @* <th><button @onclick="DeleteAllRows">Delete Everything</button></th> *@
-            @* <th><button @onclick="CreateEverything">Create Everything</button></th> *@
-            @* <th>Total rows: @TestDatas.Count</th> *@
-        @* </tr> *@
         <tr>
-            <th>Sample code</th>
-            <th>Test</th>
+            <th>Total rows: @TestDatas.Count</th>
+            @* <th><button @onclick="PrintInfoToConsole">Info</button></th> *@
+            <th><button @onclick="DeleteAllRows">Delete Everything</button></th>
+            <th><button @onclick="CreateEverything">Create Everything</button></th>
+            @* <th>Total rows: @TestDatas.Count</th> *@
+        </tr>
+        <tr>
+            <th>
+                <select @bind="CurrentDisplaySampleCode">
+                    @foreach (var pCode in Info.PlantCodes)
+                    {
+                        <option value=@pCode>@pCode</option>
+                    }
+                    @foreach (var wCode in Info.WasteCodes)
+                    {
+                        <option value=@wCode>@wCode</option>
+                    }
+                    @foreach (var sCode in Info.SolutionCodes)
+                    {
+                        <option value=@sCode>@sCode</option>
+                    }
+                    @foreach (var mCode in Info.MediaCodes)
+                    {
+                        <option value=@mCode>@mCode</option>
+                    }
+                </select>
+            </th>
+            <th>Test Name</th>
             <th>Default</th>
             <th>Low</th>
             <th>High</th>
             <th>Units</th>
-            <th>Total rows: @TestDatas.Count</th>
         </tr>
     </thead>
     <tbody>
@@ -33,27 +52,31 @@
         {
             @foreach (var test in TestDatas)
             {
-                string assigned = "No";
-                if (@test.DefaultAssigned == true)
+                if (@test.SampleCode.Equals(CurrentDisplaySampleCode))
                 {
-                    assigned = "Yes";
+
+                    string assigned = "No";
+                    if (@test.DefaultAssigned == true)
+                    {
+                        assigned = "Yes";
+                    }
+
+                    var color = "#cccccc";
+                    if (TestDatas.IndexOf(test) % 2 == 0)
+                        color = "#eeeeee";
+
+                    <TestDataRow
+                    DatabaseId=@test.Id
+                    SampleCode=@test.SampleCode
+                    Name=@test.Name
+                    DefaultAssigned=@assigned
+                    LowValue=@test.LowValue
+                    HighValue=@test.HighValue
+                    Units=@test.Units
+                    RenderParent="@OnInitializedAsync"
+                    BGColor=@color
+                    />
                 }
-
-                var color = "#cccccc";
-                if (TestDatas.IndexOf(test) %2 == 0)
-                    color = "#eeeeee";
-
-                <TestDataRow
-                DatabaseId=@test.Id
-                SampleCode=@test.SampleCode
-                Name=@test.Name
-                DefaultAssigned=@assigned
-                LowValue=@test.LowValue
-                HighValue=@test.HighValue
-                Units=@test.Units
-                RenderParent="@OnInitializedAsync"
-                BGColor=@color
-                />
             }
         }
 
@@ -72,7 +95,21 @@
     private string CreateDefault = "No";
     private double CreateLow = 0.0;
     private double CreateHigh = 100.0;
-    private string CreateUnits = "%";
+    private string CreateUnits = "ppm";
+
+    private string CurrentDisplaySampleCode = "Amaranth";
+
+
+    private void AddHMTests(string sampleCode, PWSMDbContext context) {
+
+        foreach (var test in Info.HMTests)
+        {
+            CreateName = test;
+            CreateSampleCode = sampleCode;
+            CreateDefault = "No";
+            CreateRow(context);
+        }
+    }
 
     private void AddICPTests(string sampleCode, PWSMDbContext context) {
 
@@ -159,6 +196,7 @@
                 }
 
                 AddICPTests(plantCode, context);
+                AddHMTests(plantCode, context);
             }
 
 
@@ -189,6 +227,7 @@
                 }
 
                 AddICPTests(wasteCode, context);
+                AddHMTests(wasteCode, context);
             }
 
             // Solid waste gets ICP, DM, N
@@ -230,6 +269,7 @@
                 }
 
                 AddICPTests(wasteCode, context);
+                AddHMTests(wasteCode, context);
             }
 
 
@@ -263,6 +303,7 @@
                 }
 
                 AddICPTests(solutionCode, context);
+                AddHMTests(solutionCode, context);
             }
             
 
@@ -290,6 +331,7 @@
                 }
 
                 AddICPTests(mediaCode, context);
+                AddHMTests(mediaCode, context);
             }
 
         }
@@ -300,6 +342,47 @@
     }
 
     private async void CreateRow(PWSMDbContext context) {
+
+        switch (CreateName)
+        {
+            case "N":
+            case "P (ICP)":
+            case "K (ICP)":
+            case "Ca (ICP)":
+            case "Mg (ICP)":
+            case "S (ICP)":
+            {
+                if (Array.IndexOf(Info.PlantCodes, CreateSampleCode) >= 0)
+                    CreateUnits = "pct";
+            } break;
+
+            case "EC":
+            {
+                CreateLow = 0;
+                CreateHigh = 10000;
+                CreateUnits = "10^-5 S/cm";
+            } break;
+
+            case "pH":
+            {
+                CreateLow = 1;
+                CreateHigh = 14;
+                CreateUnits = "";
+
+            } break;
+
+            case "DW":
+            {
+                CreateUnits = "g";
+            } break;
+
+            default:
+            {
+                CreateLow = 0;
+                CreateHigh = 100;
+                CreateUnits = "ppm";
+            } break;
+        }
 
         var count = await context.TestDataTable.CountAsync();
         if (count >= MAX_TABLE_SIZE)
@@ -338,36 +421,7 @@
 
         using (var context = new PWSMDbContext())
         {
-            var count = await context.TestDataTable.CountAsync();
-            if (count >= MAX_TABLE_SIZE)
-            {
-                Console.WriteLine("Test data table is too big.");
-                return;
-            }
-
-            try
-            {
-                var newTestData = new LabTestData();
-                newTestData.Name = CreateName;
-                newTestData.SampleCode = CreateSampleCode;
-                
-                newTestData.DefaultAssigned = false;
-                if (CreateDefault.Equals("Yes"))
-                {
-                    newTestData.DefaultAssigned = true;
-                }
-                newTestData.LowValue = CreateLow;
-                newTestData.HighValue = CreateHigh;
-                newTestData.Units = CreateUnits;
- 
-                context.TestDataTable.Add(newTestData);
-                await context.SaveChangesAsync();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-                
-            }
+            CreateRow(context);
         }
 
         await OnInitializedAsync();
@@ -377,6 +431,7 @@
 
         using (var context = new PWSMDbContext())
         {
+            Console.WriteLine("Beginning deletion of all rows...");
             while (TestDatas.Count > 0)
             {
                 try
@@ -395,6 +450,7 @@
             }
         }
 
+        Console.WriteLine("Deletion complete.");
         await OnInitializedAsync();
     }
 
@@ -425,7 +481,7 @@
         Console.WriteLine($"{plantCount} plant, {wasteCount} waste, {solutionCount} solution, "
           + $"and {mediaCount} media.");
 
-        int testCount = Info.AllTests.Count() + Info.ICPTests.Count();
+        int testCount = Info.AllTests.Count() + Info.ICPTests.Count() + Info.HMTests.Count();
 
         Console.WriteLine($"There are {testCount} total tests.");
 

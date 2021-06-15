@@ -53,3 +53,22 @@ input[type=number]::-webkit-inner-spin-button {
         right: 0.75rem;
         top: 0.5rem;
     }
+
+    .test-input {
+        border: none;
+        
+    }
+
+    .test-input:focus {
+        border: 2px black;
+        background-color: white;
+    }
+
+input[type=number]::-webkit-inner-spin-button, 
+input[type=number]::-webkit-outer-spin-button { 
+  -webkit-appearance: none; 
+}
+
+input[type=number] {
+  -moz-appearance: textfield;
+}

@@ -200,7 +200,7 @@ namespace BlazorLIMS.Data {
             "DM",
             "DW",
             "EC",
-            "HM",
+            // "HM",
             // "ICP",
             "Mo",
             "N",
@@ -213,18 +213,18 @@ namespace BlazorLIMS.Data {
 
         public static readonly string[] ICPTests = {
 
-            "Al",
-            "B",
-            "Ca",
-            "Cu",
-            "Fe",
-            "K",
-            "Mg",
-            "Mn",
-            "Na",
-            "P",
-            "S",
-            "Zn",
+            "Al (ICP) ",
+            "B (ICP) ",
+            "Ca (ICP) ",
+            "Cu (ICP) ",
+            "Fe (ICP) ",
+            "K (ICP) ",
+            "Mg (ICP) ",
+            "Mn (ICP) ",
+            "Na (ICP) ",
+            "P (ICP) ",
+            "S (ICP) ",
+            "Zn (ICP) ",
 
             // "Al (Aluminium)",
             // "B (Boron)",
@@ -238,6 +238,14 @@ namespace BlazorLIMS.Data {
             // "P (Phosphorus)",
             // "S (Sulfur)",
             // "Zn (Zinc)",
+
+        };
+
+        public static readonly string[] HMTests = {
+
+            "Cd (HM)",
+            "Ni (HM)",
+            "Pb (HM)"
 
         };
 

@@ -1,16 +1,20 @@
 using Microsoft.EntityFrameworkCore;
 using BlazorLIMS.Data;
+using System;
 
 namespace BlazorLIMS {
 
     public class PWSMDbContext : DbContext {
 
         public PWSMDbContext() {
+
+            Console.WriteLine("Database context created.");
             
         }
 
         public PWSMDbContext (DbContextOptions<PWSMDbContext> options) : base(options) {
 
+            Console.WriteLine("Database context created.");
         }
 
         public DbSet<ReportModel> PlantReportModels { get; set; }

@@ -1,15 +1,35 @@
 @using BlazorLIMS.Data;
 @using System;
 
-<tr style="background-color: @BGColor">
+<tr style="background-color: @BGColor;">
     <th>@SampleCode</th>
     <th>@Name</th>
-    <th>@DefaultAssigned</th>
-    <th><input type="number" step="0.1" value="@LowValue"
+    <th>
+        <select value="@DefaultAssigned"
+        @onchange="(ui) => UpdateDefault(ui.Value.ToString())">
+            <option value="Yes">Yes</option>
+            <option value="No">No</option>
+        </select>
+    </th>
+    <th><input type="number" step="none" value="@LowValue" class="test-input"
+        style="background-color: white;"
         @onchange="(ui) => UpdateLowValue(Convert.ToDouble(ui.Value))">
     </th>
-    <th>@HighValue</th>
-    <th>@Units</th>
+    <th><input type="number" step="0.1" value="@HighValue" class="test-input"
+        style="background-color: white;"
+        @onchange="(ui) => UpdateHighValue(Convert.ToDouble(ui.Value))">
+    </th>
+    <th>
+        <select value="@Units"
+        @onchange="(ui) => UpdateUnits(ui.Value.ToString())">
+            <option value="g">g</option>
+            <option value="mg">mg</option>
+            <option value="pct">pct</option>
+            <option value="ppm">ppm</option>
+            <option value="10^-5 S/cm">10^-5 S/cm</option>
+            <option value="">(none)</option>
+        </select>
+    </th>
 </tr>
 
 @code {
@@ -41,6 +61,56 @@
     [Parameter]
     public string BGColor { get; set; }
 
+
+    private async void UpdateDefault(string value) {
+
+        bool def = (value.Equals("Yes")) ? true : false;
+
+        using (var context = new PWSMDbContext())
+        {
+            try
+            {
+                var RowToUpdate = await context.TestDataTable.FindAsync(DatabaseId);
+
+                if (RowToUpdate != null)
+                {
+                    RowToUpdate.DefaultAssigned = def;
+                    await context.SaveChangesAsync();
+                    Console.WriteLine($"Changed default assignment of item {DatabaseId} to {def}");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+        }
+
+    }
+
+
+    private async void UpdateHighValue(double value) {
+
+        using (var context = new PWSMDbContext())
+        {
+            try
+            {
+                var RowToUpdate = await context.TestDataTable.FindAsync(DatabaseId);
+
+                if (RowToUpdate != null)
+                {
+                    RowToUpdate.HighValue = value;
+                    await context.SaveChangesAsync();
+                    Console.WriteLine($"Changed high value of item {DatabaseId} to {value}");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+        }
+
+    }
+
     private async void UpdateLowValue(double value) {
 
         using (var context = new PWSMDbContext())
@@ -62,6 +132,28 @@
             }
         }
 
+    }
+
+    private async void UpdateUnits(string value) {
+
+        using (var context = new PWSMDbContext())
+        {
+            try
+            {
+                var RowToUpdate = await context.TestDataTable.FindAsync(DatabaseId);
+
+                if (RowToUpdate != null)
+                {
+                    RowToUpdate.Units = value;
+                    await context.SaveChangesAsync();
+                    Console.WriteLine($"Changed units of item {DatabaseId} to {value}");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+        }
     }
 
     private async void DeleteRow() {
