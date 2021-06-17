@@ -28,8 +28,12 @@ namespace BlazorLIMS {
         public DbSet<SampleModel> MediaSampleModels { get; set; }
 
         public DbSet<ReportModel> DeletedReportModels { get; set; }
+        
+        public DbSet<TestDataModel> TestDataTable { get; set; }
+        public DbSet<SampleCodeModel> SampleCodeTable { get; set; }
 
-        public DbSet<LabTestData> TestDataTable { get; set; }
+
+
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

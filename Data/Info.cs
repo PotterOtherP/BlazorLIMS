@@ -170,6 +170,20 @@ namespace BlazorLIMS.Data {
 
         };
 
+        public static readonly string[,] PlantTestMenu = {
+
+            { "Biomass", "g" },
+            { "C", "pct" },
+            { "Cl", "ppm" },
+            { "DW", "g" },
+            { "HM", "" },
+            { "ICP", "" },
+            { "Mo", "ppm" },
+            { "N", "pct" },
+            { "NO3", "ppm" },
+
+        };
+
         public static readonly string[] AllTests = {
 
             // "Biomass",

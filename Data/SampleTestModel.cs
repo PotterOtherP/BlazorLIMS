@@ -2,7 +2,7 @@ using System;
 
 namespace BlazorLIMS.Data {
 
-    public class SampleTest {
+    public class SampleTestModel {
 
         public int Id { get; set; }
 

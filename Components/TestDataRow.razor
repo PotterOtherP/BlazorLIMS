@@ -4,13 +4,6 @@
 <tr style="background-color: @BGColor;">
     <th>@SampleCode</th>
     <th>@Name</th>
-    <th>
-        <select value="@DefaultAssigned"
-        @onchange="(ui) => UpdateDefault(ui.Value.ToString())">
-            <option value="Yes">Yes</option>
-            <option value="No">No</option>
-        </select>
-    </th>
     <th><input type="number" step="none" value="@LowValue" class="test-input"
         style="background-color: white;"
         @onchange="(ui) => UpdateLowValue(Convert.ToDouble(ui.Value))">
@@ -44,9 +37,6 @@
     public string SampleCode { get; set; }
 
     [Parameter]
-    public string DefaultAssigned { get; set; }
-
-    [Parameter]
     public string Units { get; set; }
 
     [Parameter]
@@ -60,32 +50,6 @@
 
     [Parameter]
     public string BGColor { get; set; }
-
-
-    private async void UpdateDefault(string value) {
-
-        bool def = (value.Equals("Yes")) ? true : false;
-
-        using (var context = new PWSMDbContext())
-        {
-            try
-            {
-                var RowToUpdate = await context.TestDataTable.FindAsync(DatabaseId);
-
-                if (RowToUpdate != null)
-                {
-                    RowToUpdate.DefaultAssigned = def;
-                    await context.SaveChangesAsync();
-                    Console.WriteLine($"Changed default assignment of item {DatabaseId} to {def}");
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-            }
-        }
-
-    }
 
 
     private async void UpdateHighValue(double value) {
@@ -156,47 +120,5 @@
         }
     }
 
-    private async void DeleteRow() {
 
-        using (var context = new PWSMDbContext())
-        {
-            try
-            {
-
-                var RowToDelete = await context.TestDataTable.FindAsync(DatabaseId);
-
-                if (RowToDelete != null)
-                {
-                    context.TestDataTable.Remove(RowToDelete);
-                    await context.SaveChangesAsync();
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-            }
-        }
-
-        await RenderParent.InvokeAsync();
-    }
-
-    private async void DuplicateRow() {
-
-        var newRow = new LabTestData();
-
-        newRow.Name = this.Name;
-        newRow.SampleCode = this.SampleCode;
-        newRow.DefaultAssigned = (this.DefaultAssigned == "Yes" ? true : false);
-        newRow.LowValue = this.LowValue;
-        newRow.HighValue = this.HighValue;
-        newRow.Units = this.Units;
-
-        using (var context = new PWSMDbContext())
-        {
-            await context.TestDataTable.AddAsync(newRow);
-            await context.SaveChangesAsync();
-        }
-
-        await RenderParent.InvokeAsync();
-    }
 }

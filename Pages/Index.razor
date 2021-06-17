@@ -4,11 +4,14 @@
 @using BlazorLIMS.Components;
 @using BlazorLIMS.Data;
 
+
 <ReportCreationForm CreatedReport=@Report OnClickCallback="@CreateGrid"/>
 
 @if (Report != null && Report.Samples != null)
 {
-    <h5>@Report.SampleType</h5>
+    string prefix = "R" + @Report.SampleType.Substring(0,1) + @Report.LabReportId;
+
+    <h5>@prefix</h5>
     <h5>@Report.ReportType</h5>
 
     foreach(SampleModel sample in @Report.Samples)

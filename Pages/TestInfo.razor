@@ -5,13 +5,24 @@
 @using BlazorLIMS.Components;
 @using System;
 
+<style>
+    input[type=number]::-webkit-inner-spin-button, 
+    input[type=number]::-webkit-outer-spin-button { 
+    -webkit-appearance: none; 
+    }
+
+    input[type=number] {
+    -moz-appearance: textfield;
+}
+</style>
+
 <table class="table">
     <thead>
         <tr>
             <th>Total rows: @TestDatas.Count</th>
             @* <th><button @onclick="PrintInfoToConsole">Info</button></th> *@
-            <th><button @onclick="DeleteAllRows">Delete Everything</button></th>
-            <th><button @onclick="CreateEverything">Create Everything</button></th>
+            @* <th><button @onclick="DeleteAllRows">Delete Everything</button></th> *@
+            @* <th><button @onclick="CreateEverything">Create Everything</button></th> *@
             @* <th>Total rows: @TestDatas.Count</th> *@
         </tr>
         <tr>
@@ -36,7 +47,6 @@
                 </select>
             </th>
             <th>Test Name</th>
-            <th>Default</th>
             <th>Low</th>
             <th>High</th>
             <th>Units</th>
@@ -55,12 +65,6 @@
                 if (@test.SampleCode.Equals(CurrentDisplaySampleCode))
                 {
 
-                    string assigned = "No";
-                    if (@test.DefaultAssigned == true)
-                    {
-                        assigned = "Yes";
-                    }
-
                     var color = "#cccccc";
                     if (TestDatas.IndexOf(test) % 2 == 0)
                         color = "#eeeeee";
@@ -68,8 +72,7 @@
                     <TestDataRow
                     DatabaseId=@test.Id
                     SampleCode=@test.SampleCode
-                    Name=@test.Name
-                    DefaultAssigned=@assigned
+                    Name=@test.TestName
                     LowValue=@test.LowValue
                     HighValue=@test.HighValue
                     Units=@test.Units
@@ -86,373 +89,9 @@
 
 @code {
 
-    private readonly int MAX_TABLE_SIZE = 10000;
-
-    private IList<LabTestData> TestDatas;
-
-    private string CreateName = "";
-    private string CreateSampleCode = "";
-    private string CreateDefault = "No";
-    private double CreateLow = 0.0;
-    private double CreateHigh = 100.0;
-    private string CreateUnits = "ppm";
+    private IList<TestDataModel> TestDatas;
 
     private string CurrentDisplaySampleCode = "Amaranth";
-
-
-    private void AddHMTests(string sampleCode, PWSMDbContext context) {
-
-        foreach (var test in Info.HMTests)
-        {
-            CreateName = test;
-            CreateSampleCode = sampleCode;
-            CreateDefault = "No";
-            CreateRow(context);
-        }
-    }
-
-    private void AddICPTests(string sampleCode, PWSMDbContext context) {
-
-        foreach (var test in Info.ICPTests)
-        {
-            CreateName = test;
-            CreateSampleCode = sampleCode;
-            CreateDefault = "Yes";
-            CreateRow(context);
-        }
-    }
-
-    private async void CreateEverything() {
-
-        PrintInfoToConsole();
-
-        DeleteAllRows();
-        Console.WriteLine("All previous entries deleted.");
-
-        string[] PlantsWithMo = {
-
-            "Alfalfa",
-            "Broccoli",
-            "Cabbage",
-            "Cauliflower",
-            "Collards",
-            "Kale",
-            "Kohlrabi",
-            "Poinsettia",
-            "Spinach"
-
-        };
-
-        string[] PlantsWithNO3 = {
-
-            "Cotton",
-            "Strawberry"
-
-        };
-
-        string[] WasteWithExtra = {
-
-            "BCO - Biosolids, composted",
-            "BIX - Biosolids, mixed",
-            "CSW - Wood ash",
-            "CSC - Coal ash",
-            "FCD - Composted manure - Dairy",
-            "FCP - Composted manure - Poultry",
-            "FCS - Composted manure - Swine",
-            "FCW - Compost, plant material",
-            "FCV - Vermicompost",
-            "IOC - Paper fiber/pulp",
-            "IOL - Lime by-products",
-            "NBS - Wood waste/sawdust",
-            "NCR - Raw plant material/crop residues",
-            "NSF - Food/beverage by-products (solid)",
-            "NSO - Non-composted solid"
-
-        };
-
-        using (var context = new PWSMDbContext())
-        {
-            // Create every kind of test for every kind of sample
-
-            foreach (var plantCode in Info.PlantCodes)
-            {
-                Console.WriteLine($"{plantCode}...");
-                foreach (var testName in Info.AllTests)
-                {
-                    CreateName = testName;
-                    CreateSampleCode = plantCode;
-                    CreateDefault = "No";
-
-                    if (testName.Equals("N"))
-                        CreateDefault = "Yes";
-
-                    if (testName.Equals("Mo") && Array.IndexOf(PlantsWithMo, plantCode) >= 0)
-                        CreateDefault = "Yes";
-
-                    if (testName.Equals("NO3") && Array.IndexOf(PlantsWithNO3, plantCode) >= 0)
-                        CreateDefault = "Yes";
-
-                    CreateRow(context);
-                }
-
-                AddICPTests(plantCode, context);
-                AddHMTests(plantCode, context);
-            }
-
-
-            // Liquid waste gets ICP, TKN, pH
-            foreach (var wasteCode in Info.WasteCodesLiquid)
-            {
-                Console.WriteLine($"{wasteCode}...");
-
-                foreach (var testName in Info.AllTests)
-                {
-                    CreateName = testName;
-                    CreateSampleCode = wasteCode;
-                    CreateDefault = "No";
-
-                    if (testName.Equals("pH"))
-                        CreateDefault = "Yes";
-
-                    if (testName.Equals("TKN"))
-                        CreateDefault = "Yes";
-
-                    if (testName.Equals("EC") && wasteCode.Equals("NLF - Food/beverage by-products (liquid)"))
-                        CreateDefault = "Yes";
-
-                    if (testName.Equals("EC") && wasteCode.Equals("NLO - Non-composted liquid"))
-                        CreateDefault = "Yes";
-
-                    CreateRow(context);
-                }
-
-                AddICPTests(wasteCode, context);
-                AddHMTests(wasteCode, context);
-            }
-
-            // Solid waste gets ICP, DM, N
-            // Compost and industrial get C, pH, EC. Lime gets CCE
-            foreach (var wasteCode in Info.WasteCodesSolid)
-            {
-                Console.WriteLine($"{wasteCode}...");
-
-                foreach (var testName in Info.AllTests)
-                {
-                    CreateName = testName;
-                    CreateSampleCode = wasteCode;
-                    CreateDefault = "No";
-
-                    if (testName.Equals("DM"))
-                        CreateDefault = "Yes";
-
-                    if (testName.Equals("N"))
-                        CreateDefault = "Yes";
-
-                    if (testName.Equals("C") && Array.IndexOf(WasteWithExtra, wasteCode) >= 0)
-                        CreateDefault = "Yes";
-
-                    if (testName.Equals("pH") && Array.IndexOf(WasteWithExtra, wasteCode) >= 0)
-                        CreateDefault = "Yes";
-
-                    if (testName.Equals("EC") && Array.IndexOf(WasteWithExtra, wasteCode) >= 0)
-                        CreateDefault = "Yes";
-
-                    if (wasteCode.Equals("IOL - Lime by-products"))
-                    {
-                        if (testName.Equals("CCE"))
-                            CreateDefault = "Yes";
-                        if (testName.Equals("C"))
-                            CreateDefault = "No";
-                    }
-
-                    CreateRow(context);
-                }
-
-                AddICPTests(wasteCode, context);
-                AddHMTests(wasteCode, context);
-            }
-
-
-            // Solutions get ICP, CBC, NH4/NO3, Cl, pH, EC
-            foreach (var solutionCode in Info.SolutionCodes)
-            {
-                Console.WriteLine($"{solutionCode}...");
-
-                foreach(var testName in Info.AllTests)
-                {
-                    CreateName = testName;
-                    CreateSampleCode = solutionCode;
-                    CreateDefault = "No";
-
-                    if (testName.Equals("CBC"))
-                        CreateDefault = "Yes";
-
-                    if (testName.Equals("NH4/NO3"))
-                        CreateDefault = "Yes";
-
-                    if (testName.Equals("Cl"))
-                        CreateDefault = "Yes";
-
-                    if (testName.Equals("pH"))
-                        CreateDefault = "Yes";
-
-                    if (testName.Equals("EC"))
-                        CreateDefault = "Yes";
-
-                    CreateRow(context);
-                }
-
-                AddICPTests(solutionCode, context);
-                AddHMTests(solutionCode, context);
-            }
-            
-
-            // Media gets ICP, pH, EC, NH4/NO3
-            foreach (var mediaCode in Info.MediaCodes)
-            {
-                Console.WriteLine($"{mediaCode}...");
-
-                foreach(var testName in Info.AllTests)
-                {
-                    CreateName = testName;
-                    CreateSampleCode = mediaCode;
-                    CreateDefault = "No";
-
-                    if (testName.Equals("NH4/NO3"))
-                        CreateDefault = "Yes";
-
-                    if (testName.Equals("pH"))
-                        CreateDefault = "Yes";
-
-                    if (testName.Equals("EC"))
-                        CreateDefault = "Yes";
-
-                    CreateRow(context);
-                }
-
-                AddICPTests(mediaCode, context);
-                AddHMTests(mediaCode, context);
-            }
-
-        }
-
-        await OnInitializedAsync();
-
-        Console.WriteLine("Process complete.");
-    }
-
-    private async void CreateRow(PWSMDbContext context) {
-
-        switch (CreateName)
-        {
-            case "N":
-            case "P (ICP)":
-            case "K (ICP)":
-            case "Ca (ICP)":
-            case "Mg (ICP)":
-            case "S (ICP)":
-            {
-                if (Array.IndexOf(Info.PlantCodes, CreateSampleCode) >= 0)
-                    CreateUnits = "pct";
-            } break;
-
-            case "EC":
-            {
-                CreateLow = 0;
-                CreateHigh = 10000;
-                CreateUnits = "10^-5 S/cm";
-            } break;
-
-            case "pH":
-            {
-                CreateLow = 1;
-                CreateHigh = 14;
-                CreateUnits = "";
-
-            } break;
-
-            case "DW":
-            {
-                CreateUnits = "g";
-            } break;
-
-            default:
-            {
-                CreateLow = 0;
-                CreateHigh = 100;
-                CreateUnits = "ppm";
-            } break;
-        }
-
-        var count = await context.TestDataTable.CountAsync();
-        if (count >= MAX_TABLE_SIZE)
-        {
-            Console.WriteLine("Test data table is too big.");
-            return;
-        }
-
-        try
-        {
-            var newTestData = new LabTestData();
-            newTestData.Name = CreateName;
-            newTestData.SampleCode = CreateSampleCode;
-            
-            newTestData.DefaultAssigned = false;
-            if (CreateDefault.Equals("Yes"))
-            {
-                newTestData.DefaultAssigned = true;
-            }
-            newTestData.LowValue = CreateLow;
-            newTestData.HighValue = CreateHigh;
-            newTestData.Units = CreateUnits;
-
-            context.TestDataTable.Add(newTestData);
-            await context.SaveChangesAsync();
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine(ex.Message);
-            
-        }
-
-    }
-
-    private async void CreateRow() {
-
-        using (var context = new PWSMDbContext())
-        {
-            CreateRow(context);
-        }
-
-        await OnInitializedAsync();
-    }
-
-    private async void DeleteAllRows() {
-
-        using (var context = new PWSMDbContext())
-        {
-            Console.WriteLine("Beginning deletion of all rows...");
-            while (TestDatas.Count > 0)
-            {
-                try
-                {
-                    var RowToDelete = await context.TestDataTable.FindAsync(TestDatas[0].Id);
-                    context.TestDataTable.Remove(RowToDelete);
-                    await context.SaveChangesAsync();
-                    TestDatas = await context.TestDataTable.ToListAsync();
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine(ex.Message);
-                    break;
-                }
-
-            }
-        }
-
-        Console.WriteLine("Deletion complete.");
-        await OnInitializedAsync();
-    }
 
     protected override async Task OnInitializedAsync() {
 
@@ -467,25 +106,6 @@
                 Console.WriteLine(ex.Message);
             }
         }
-    }
-
-    private void PrintInfoToConsole() {
-
-        int plantCount = Info.PlantCodes.Count();
-        int wasteCount = Info.WasteCodes.Count();
-        int solutionCount = Info.SolutionCodes.Count();
-        int mediaCount = Info.MediaCodes.Count();
-        int totalCodeCount = plantCount + wasteCount + solutionCount + mediaCount;
-
-        Console.Write($"There are {totalCodeCount} total sample types: ");
-        Console.WriteLine($"{plantCount} plant, {wasteCount} waste, {solutionCount} solution, "
-          + $"and {mediaCount} media.");
-
-        int testCount = Info.AllTests.Count() + Info.ICPTests.Count() + Info.HMTests.Count();
-
-        Console.WriteLine($"There are {testCount} total tests.");
-
-        Console.WriteLine($"For a total of {testCount * totalCodeCount} entries in the table.");
     }
 
 
