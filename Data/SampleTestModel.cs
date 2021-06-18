@@ -9,6 +9,7 @@ namespace BlazorLIMS.Data {
         public string Name { get; set; }
         public double LowValue { get; set; }
         public double HighValue { get; set; }
+        public string Units { get; set; }
 
         public double MeasuredValue { get; set; }
 

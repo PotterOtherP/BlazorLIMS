@@ -1,4 +1,6 @@
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System;
 
 namespace BlazorLIMS.Data {
 
@@ -9,7 +11,12 @@ namespace BlazorLIMS.Data {
 
         public string Name { get; set; }
         public string Type { get; set; }
+        private string DefaultTestString;
 
-        public string[] DefaultTests { get; set; }
+        [NotMapped]
+        public string[] DefaultTests { 
+            get { return DefaultTestString.Split("|"); }
+            set { DefaultTestString = String.Join('|', value);  } 
+        }
     }
 }

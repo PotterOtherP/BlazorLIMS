@@ -16,35 +16,6 @@ namespace BlazorLIMS.Migrations
             modelBuilder
                 .HasAnnotation("ProductVersion", "5.0.6");
 
-            modelBuilder.Entity("BlazorLIMS.Data.LabTestData", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<bool>("DefaultAssigned")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<double>("HighValue")
-                        .HasColumnType("REAL");
-
-                    b.Property<double>("LowValue")
-                        .HasColumnType("REAL");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("SampleCode")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Units")
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("TestDataTable");
-                });
-
             modelBuilder.Entity("BlazorLIMS.Data.ReportModel", b =>
                 {
                     b.Property<int>("ReportModelId")
@@ -72,6 +43,23 @@ namespace BlazorLIMS.Migrations
                     b.HasKey("ReportModelId");
 
                     b.ToTable("ReportModel");
+                });
+
+            modelBuilder.Entity("BlazorLIMS.Data.SampleCodeModel", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Type")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("SampleCodeTable");
                 });
 
             modelBuilder.Entity("BlazorLIMS.Data.SampleModel", b =>
@@ -111,7 +99,7 @@ namespace BlazorLIMS.Migrations
                     b.ToTable("SampleModel");
                 });
 
-            modelBuilder.Entity("BlazorLIMS.Data.SampleTest", b =>
+            modelBuilder.Entity("BlazorLIMS.Data.SampleTestModel", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -132,11 +120,40 @@ namespace BlazorLIMS.Migrations
                     b.Property<int?>("SampleModelId")
                         .HasColumnType("INTEGER");
 
+                    b.Property<string>("Units")
+                        .HasColumnType("TEXT");
+
                     b.HasKey("Id");
 
                     b.HasIndex("SampleModelId");
 
-                    b.ToTable("SampleTest");
+                    b.ToTable("SampleTestModel");
+                });
+
+            modelBuilder.Entity("BlazorLIMS.Data.TestDataModel", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<double>("HighValue")
+                        .HasColumnType("REAL");
+
+                    b.Property<double>("LowValue")
+                        .HasColumnType("REAL");
+
+                    b.Property<string>("SampleCode")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("TestName")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Units")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("TestDataTable");
                 });
 
             modelBuilder.Entity("BlazorLIMS.Data.SampleModel", b =>
@@ -150,7 +167,7 @@ namespace BlazorLIMS.Migrations
                     b.Navigation("Report");
                 });
 
-            modelBuilder.Entity("BlazorLIMS.Data.SampleTest", b =>
+            modelBuilder.Entity("BlazorLIMS.Data.SampleTestModel", b =>
                 {
                     b.HasOne("BlazorLIMS.Data.SampleModel", null)
                         .WithMany("AssignedTests")
