@@ -1,6 +1,18 @@
+using System;
+
 namespace BlazorLIMS.Data {
 
     public class Info {
+
+        public static bool IsSolidWaste(string name) {
+
+            return Array.IndexOf(WasteCodesSolid, name) >= 0;
+        }
+
+        public static bool IsLiquidWaste(string name) {
+
+            return Array.IndexOf(WasteCodesLiquid, name) >= 0;
+        }
 
         public static readonly string[] PlantCodes = {
 
@@ -170,17 +182,63 @@ namespace BlazorLIMS.Data {
 
         };
 
-        public static readonly string[,] PlantTestMenu = {
+        public static readonly string[] PlantTestMenu = {
 
-            { "Biomass", "g" },
-            { "C", "pct" },
-            { "Cl", "ppm" },
-            { "DW", "g" },
-            { "HM", "" },
-            { "ICP", "" },
-            { "Mo", "ppm" },
-            { "N", "pct" },
-            { "NO3", "ppm" },
+            "ICP",
+            "Biomass",
+            "C",
+            "Cl",
+            "DW",
+            "HM",
+            "Mo",
+            "N",
+            "NO3",
+
+        };
+
+        public static readonly string[] WasteTestMenu = {
+
+            "ICP",
+            "C",
+            "CCE",
+            "Cl",
+            "DM",
+            "EC",
+            "HM",
+            "Mo",
+            "N",
+            "NH4/NO3",
+            "pH",
+            "TKN",
+            "Urea"
+
+        };
+
+        public static readonly string[] SolutionTestMenu = {
+
+            "ICP",
+            "CBC",
+            "Cl",
+            "EC",
+            "HM",
+            "Mo",
+            "NH4/NO3",
+            "pH",
+            "Urea"
+
+        };
+
+        public static readonly string[] MediaTestMenu = {
+
+            "ICP",
+            "Bulk Density",
+            "Cl",
+            "EC",
+            "HM",
+            "Mo",
+            "NH4/NO3",
+            "pH",
+            "Urea"
 
         };
 

@@ -4,6 +4,37 @@
 @using BlazorLIMS.Data;
 @using System;
 
+@inject IJSRuntime JSRuntime;
+
+
+<select value=@CreateSampleType style="margin: 20px"
+    @onchange="(ui) => SetSampleType(ui.Value.ToString())" >
+    <option value="Plant">Plant</option>
+    <option value="WasteLiquid">Waste (Liquid)</option>
+    <option value="WasteSolid">Waste (Solid)</option>
+    <option value="Solution">Solution</option>
+    <option value="Media">Media</option>
+</select>
+
+<input type="text" @bind="CreateSampleCode" style="margin: 20px;" />
+
+<button @onclick="CreateRow" style="margin: 20px;">Create</button>
+
+<div style="display: flex; flex-direction: flex-row; ">
+    @foreach (var test in TestMenu)
+    {
+        bool deflt = IsDefault(@CreateSampleType, @test);
+        var boxId = $"{@test}Box";
+
+        <p style="margin: 10px; font-weight: bold;">
+            <input type="checkbox" id=@boxId value=@test checked=@deflt/>
+            <label for=@test>@test</label>
+        </p>
+    }
+
+</div>
+
+
 <table class="table">
     <thead>
 
@@ -30,7 +61,64 @@
 
     private IList<SampleCodeModel> SampleCodes;
 
+    private string CreateSampleType = "Plant";
+    private string CreateSampleCode = "";
+
+    private string[] TestMenu;
+
+    private async void CreateRow() {
+        
+        if (CreateSampleType.Equals("WasteLiquid") || CreateSampleType.Equals("WasteSolid"))
+        {
+            CreateSampleType = "Waste";
+        }
+
+        string bName = "CBox";
+
+        var result = await JSRuntime.InvokeAsync<bool>("boxChecked", bName);
+        Console.WriteLine($"Result is {result}");
+
+        await OnInitializedAsync();
+    }
+
+    private bool IsDefault(string type, string name) {
+
+        switch(type)
+        {
+            case "Plant":
+            {
+                return (name.Equals("ICP") || name.Equals("N"));
+            }
+
+            case "WasteSolid":
+            {
+                return (name.Equals("ICP") || name.Equals("N") || name.Equals("DM"));
+            }
+
+            case "WasteLiquid":
+            {
+                return (name.Equals("ICP") || name.Equals("TKN") || name.Equals("pH"));
+            }
+
+            case "Solution":
+            {
+                return (name.Equals("ICP") || name.Equals("CBC") || name.Equals("EC")
+                    || name.Equals("pH") || name.Equals("Cl") || name.Equals("NH4/NO3"));
+            }
+
+            case "Media":
+            {
+                return (name.Equals("ICP") || name.Equals("pH")
+                    || name.Equals("NH4/NO3") || name.Equals("EC"));
+            }
+        }
+
+        return false;
+    }
+
     protected override async Task OnInitializedAsync() {
+
+        SetSampleType("Plant");
 
         using (var context = new PWSMDbContext())
         {
@@ -43,5 +131,25 @@
                 Console.WriteLine(ex.Message);
             }
         }
+    }
+
+    private void SetSampleType(string value) {
+
+        Console.WriteLine($"Sample type set to {value}");
+
+        if (value.Equals("Plant"))
+            TestMenu = Info.PlantTestMenu;
+
+        else if (value.Equals("WasteLiquid") || value.Equals("WasteSolid"))
+            TestMenu = Info.WasteTestMenu;
+
+        else if (value.Equals("Solution"))
+            TestMenu = Info.SolutionTestMenu;
+
+        else if (value.Equals("Media"))
+            TestMenu = Info.MediaTestMenu;
+
+        CreateSampleType = value;
+
     }
 }
