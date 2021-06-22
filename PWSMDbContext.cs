@@ -8,13 +8,13 @@ namespace BlazorLIMS {
 
         public PWSMDbContext() {
 
-            Console.WriteLine("Database context created.");
+            // Console.WriteLine("Database context created.");
             
         }
 
         public PWSMDbContext (DbContextOptions<PWSMDbContext> options) : base(options) {
 
-            Console.WriteLine("Database context created.");
+            // Console.WriteLine("Database context created.");
         }
 
         public DbSet<ReportModel> PlantReportModels { get; set; }

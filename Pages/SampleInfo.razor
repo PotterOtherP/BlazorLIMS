@@ -48,9 +48,13 @@
         {
             foreach (var item in SampleCodes)
             {
-                <tr>
-                    <th>item.Name</th>
-                </tr>
+                <SampleCodeRow
+                RowId=@item.Id
+                Name=@item.Name
+                Type=@item.Type
+                DefaultTests=@item.DefaultTestString
+                OnClickCallback="@SetTable"
+                />
             }
         }
     </tbody>
@@ -67,18 +71,50 @@
     private string[] TestMenu;
 
     private async void CreateRow() {
-        
+
+        var newRow = new SampleCodeModel();
+
+        newRow.Name = CreateSampleCode;
+        newRow.Type = CreateSampleType;
+
+        if (CreateSampleCode.Length <= 0)
+            return;
+
         if (CreateSampleType.Equals("WasteLiquid") || CreateSampleType.Equals("WasteSolid"))
         {
-            CreateSampleType = "Waste";
+            newRow.Type = "Waste";
         }
 
-        string bName = "CBox";
+        string newTests = "";
 
-        var result = await JSRuntime.InvokeAsync<bool>("boxChecked", bName);
-        Console.WriteLine($"Result is {result}");
+        foreach (var test in TestMenu)
+        {
+            string bName = $"{test}Box";
+            var result = await JSRuntime.InvokeAsync<bool>("boxChecked", bName);
 
-        await OnInitializedAsync();
+            if (result)
+            {
+                newTests += test + "|";
+            }
+        }
+
+        newRow.DefaultTestString = newTests.Substring(0, newTests.Length - 1);
+
+        using (var context = new PWSMDbContext())
+        {
+            try
+            {
+                context.SampleCodeTable.Add(newRow);
+                await context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+        }
+
+        await SetTable();
+        StateHasChanged();
     }
 
     private bool IsDefault(string type, string name) {
@@ -120,6 +156,11 @@
 
         SetSampleType("Plant");
 
+        await SetTable();
+    }
+
+    private async Task SetTable() {
+
         using (var context = new PWSMDbContext())
         {
             try
@@ -131,11 +172,12 @@
                 Console.WriteLine(ex.Message);
             }
         }
+
     }
 
     private void SetSampleType(string value) {
 
-        Console.WriteLine($"Sample type set to {value}");
+        @* Console.WriteLine($"Sample type set to {value}"); *@
 
         if (value.Equals("Plant"))
             TestMenu = Info.PlantTestMenu;

@@ -1,0 +1,56 @@
+@using System;
+@using Microsoft.EntityFrameworkCore;
+
+<tr>
+    <th>@Name</th>
+    <th>@Type</th>
+    <th>
+        @foreach (var item in @DefaultTests.Split("|"))
+        {
+            @item <span>&nbsp;</span>
+        }
+    </th>
+    <th>
+        <button @onclick="@DeleteRow">Delete</button>
+    </th>
+</tr>
+
+@code {
+
+    [Parameter]
+    public int RowId { get; set; }
+    
+    [Parameter]
+    public string Name { get; set; }
+    
+    [Parameter]
+    public string Type { get; set; }
+
+    [Parameter]
+    public string DefaultTests { get; set; }
+
+    [Parameter]
+    public EventCallback OnClickCallback { get; set; }
+
+    private async void DeleteRow() {
+
+        using (var context = new PWSMDbContext())
+        {
+            try {
+
+                var rowToDelete = await context.SampleCodeTable.FindAsync(RowId);
+                if (rowToDelete != null)
+                {
+                    context.SampleCodeTable.Remove(rowToDelete);
+                    await context.SaveChangesAsync();
+                }
+            }
+            catch (Exception ex) {
+                Console.WriteLine(ex.Message);
+            }
+        }
+
+        await OnClickCallback.InvokeAsync();
+    }
+
+}

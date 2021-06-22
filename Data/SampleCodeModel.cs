@@ -11,12 +11,7 @@ namespace BlazorLIMS.Data {
 
         public string Name { get; set; }
         public string Type { get; set; }
-        private string DefaultTestString;
+        public string DefaultTestString { get; set; }
 
-        [NotMapped]
-        public string[] DefaultTests { 
-            get { return DefaultTestString.Split("|"); }
-            set { DefaultTestString = String.Join('|', value);  } 
-        }
     }
 }

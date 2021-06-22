@@ -1,10 +1,6 @@
 function boxChecked(boxId) {
 
-    var box = document.getElementById(boxId);
-
-    console.log(boxId + ", " + box.checked);
-
-    return box.checked;
+    return document.getElementById(boxId).checked;
 }
 
 function sayHello() {
