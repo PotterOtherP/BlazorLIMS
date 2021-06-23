@@ -20,6 +20,8 @@
 
 <button @onclick="CreateRow" style="margin: 20px;">Create</button>
 
+<button @onclick="DeleteAllTestData" style="margin: 20px">Delete All Test Data</button>
+
 <div style="display: flex; flex-direction: flex-row; ">
     @foreach (var test in TestMenu)
     {
@@ -111,11 +113,108 @@
             {
                 Console.WriteLine(ex.Message);
             }
+
+            // Create the test rows
+
+            foreach (var test in TestMenu)
+            {
+                if (test.Equals("ICP"))
+                {
+                    foreach (var icpTest in Info.ICPTests)
+                        CreateTestDataRow(CreateSampleCode, icpTest);
+                }
+
+                else if (test.Equals("HM"))
+                {
+                    foreach (var hmTest in Info.HMTests)
+                        CreateTestDataRow(CreateSampleCode, hmTest);
+                }
+
+                else
+                    CreateTestDataRow(CreateSampleCode, test);
+            }
         }
 
         await SetTable();
         StateHasChanged();
     }
+
+
+    private async void CreateTestDataRow(string sampleCode, string testName) {
+
+        var newTestData = new TestDataModel();
+
+        newTestData.SampleCode = sampleCode;
+        newTestData.TestName = testName;
+
+        newTestData.LowValue = 0.0;
+        newTestData.HighValue = 100.0;
+        newTestData.Units = GetUnits(testName);
+
+        using (var context = new PWSMDbContext())
+        {
+            try {
+                await context.TestDataTable.AddAsync(newTestData);
+                await context.SaveChangesAsync();
+            }
+            catch (Exception ex) {
+                Console.WriteLine(ex.Message);
+            }
+        }
+
+    }
+
+
+    private async void DeleteAllTestData() {
+
+        Console.WriteLine("Deleting...");
+
+        using (var context = new PWSMDbContext())
+        {
+            IList<TestDataModel> testDataModels = await context.TestDataTable.ToListAsync();
+
+            while (testDataModels.Count > 0)
+            {
+                try {
+
+                    var modelToDelete = await context.TestDataTable.FindAsync(testDataModels[0].Id);
+                    context.TestDataTable.Remove(modelToDelete);
+                    await context.SaveChangesAsync();
+                    testDataModels = await context.TestDataTable.ToListAsync();
+                }
+                catch (Exception ex) {
+                    Console.WriteLine(ex.Message);
+                    break;
+                }
+            }
+
+        }
+
+        Console.WriteLine("Done.");
+    }
+
+
+    private string GetUnits(string testName) {
+
+        switch (testName)
+        {
+            case "EC":
+            {
+                return "mS/cm";
+            }
+
+            case "pH":
+            case "DW":
+            {
+                return "N/A";
+            }
+
+            default:
+                return "ppm";
+        }
+
+    }
+
 
     private bool IsDefault(string type, string name) {
 
@@ -152,12 +251,14 @@
         return false;
     }
 
+
     protected override async Task OnInitializedAsync() {
 
         SetSampleType("Plant");
 
         await SetTable();
     }
+
 
     private async Task SetTable() {
 
@@ -174,6 +275,7 @@
         }
 
     }
+
 
     private void SetSampleType(string value) {
 

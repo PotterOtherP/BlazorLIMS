@@ -46,16 +46,6 @@ namespace BlazorLIMS.Data {
 
         public static readonly string[] WasteCodesLiquid = {
 
-            // "ALS",
-            // "ALP",
-            // "BID",
-            // "GTL",
-            // "LSB",
-            // "LSD",
-            // "LSS",
-            // "NLF",
-            // "NLO",
-
             "ALS - Swine Lagoon Liquid",
             "ALP - Poultry Lagoon Liquid",
             "BID - Domestic septage",
@@ -69,26 +59,6 @@ namespace BlazorLIMS.Data {
         };
 
         public static readonly string[] WasteCodesSolid = {
-
-            // "BCO",
-            // "BIX",
-            // "CSW",
-            // "CSC",
-            // "FCD",
-            // "FCP",
-            // "FCS",
-            // "FCW",
-            // "FCV",
-            // "HLL",
-            // "HLT",
-            // "IOC",
-            // "IOL",
-            // "NBS",
-            // "NCR",
-            // "NSF",
-            // "NSO",
-            // "SSD",
-            // "SSS",
 
             "BCO - Biosolids, composted",
             "BIX - Biosolids, mixed",

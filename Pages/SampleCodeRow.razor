@@ -1,5 +1,6 @@
 @using System;
 @using Microsoft.EntityFrameworkCore;
+@using BlazorLIMS.Data;
 
 <tr>
     <th>@Name</th>
@@ -36,11 +37,16 @@
 
         using (var context = new PWSMDbContext())
         {
+            // Delete row from SampleInfo
+            // Delete test data too
             try {
 
                 var rowToDelete = await context.SampleCodeTable.FindAsync(RowId);
                 if (rowToDelete != null)
                 {
+
+
+
                     context.SampleCodeTable.Remove(rowToDelete);
                     await context.SaveChangesAsync();
                 }
@@ -48,6 +54,7 @@
             catch (Exception ex) {
                 Console.WriteLine(ex.Message);
             }
+
         }
 
         await OnClickCallback.InvokeAsync();
