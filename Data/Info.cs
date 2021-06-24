@@ -1,20 +1,49 @@
 using System;
+using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
+
 
 namespace BlazorLIMS.Data {
 
     public class Info {
 
-        public static bool IsSolidWaste(string name) {
+        public static List<string> PlantCodes;
+        public static List<string> WasteCodes;
+        public static List<string> SolutionCodes;
+        public static List<string> MediaCodes;
 
-            return Array.IndexOf(WasteCodesSolid, name) >= 0;
-        }
+        public static void PopulateLists() {
 
-        public static bool IsLiquidWaste(string name) {
+            PlantCodes.Clear();
+            WasteCodes.Clear();
+            SolutionCodes.Clear();
+            MediaCodes.Clear();
 
-            return Array.IndexOf(WasteCodesLiquid, name) >= 0;
-        }
+            using (var context = new PWSMDbContext())
+            {
+                foreach (var sample in context.SampleCodeTable)
+                {
+                    if (sample.Type.Equals("Plant"))
+                        Info.PlantCodes.Add(sample.Name);
 
-        public static readonly string[] PlantCodes = {
+                    if (sample.Type.Equals("Waste"))
+                        Info.WasteCodes.Add(sample.Name);
+
+                    if (sample.Type.Equals("Solution"))
+                        Info.SolutionCodes.Add(sample.Name);
+
+                    if (sample.Type.Equals("Media"))
+                        Info.MediaCodes.Add(sample.Name);
+                }
+            }
+
+            Info.PlantCodes.Sort();
+            Info.WasteCodes.Sort();
+            Info.SolutionCodes.Sort();
+            Info.MediaCodes.Sort();
+            }
+
+        public static readonly string[] PlantCodesArray = {
 
             "Alfalfa", "Amaranth", "Apple", "Apricot", "Artichoke", "Asparagus",
             "Barley", "Basil", "Beans", "Beets", "Blackberry", "Blueberry", "Broccoli",
@@ -44,7 +73,7 @@ namespace BlazorLIMS.Data {
             "Zucchini"
         };
 
-        public static readonly string[] WasteCodesLiquid = {
+        public static readonly string[] WasteCodesLiquidArray = {
 
             "ALS - Swine Lagoon Liquid",
             "ALP - Poultry Lagoon Liquid",
@@ -58,7 +87,7 @@ namespace BlazorLIMS.Data {
 
         };
 
-        public static readonly string[] WasteCodesSolid = {
+        public static readonly string[] WasteCodesSolidArray = {
 
             "BCO - Biosolids, composted",
             "BIX - Biosolids, mixed",
@@ -82,7 +111,7 @@ namespace BlazorLIMS.Data {
 
         };
 
-        public static readonly string[] WasteCodes = {
+        public static readonly string[] WasteCodesArray = {
 
             "ALS - Swine Lagoon Liquid",
             "ALP - Poultry Lagoon Liquid",
@@ -116,7 +145,7 @@ namespace BlazorLIMS.Data {
 
         };
 
-        public static readonly string[] SolutionCodes = {
+        public static readonly string[] SolutionCodesArray = {
 
             "AS - Source Water",
             "AP - Pond Water",
@@ -142,7 +171,7 @@ namespace BlazorLIMS.Data {
 
         };
 
-        public static readonly string[] MediaCodes = {
+        public static readonly string[] MediaCodesArray = {
 
             "GHF - GH Floriculture",
             "GHV - GH Vegetable",
@@ -214,39 +243,26 @@ namespace BlazorLIMS.Data {
 
         public static readonly string[] ICPTests = {
 
-            "Al (ICP) ",
-            "B (ICP) ",
-            "Ca (ICP) ",
-            "Cu (ICP) ",
-            "Fe (ICP) ",
-            "K (ICP) ",
-            "Mg (ICP) ",
-            "Mn (ICP) ",
-            "Na (ICP) ",
-            "P (ICP) ",
-            "S (ICP) ",
-            "Zn (ICP) ",
-
-            // "Al (Aluminium)",
-            // "B (Boron)",
-            // "Ca (Calcium)",
-            // "Cu (Copper)",
-            // "Fe ((ron)",
-            // "K (Potassium)",
-            // "Mg (Magnesium)",
-            // "Mn (Manganese)",
-            // "Na (Sodium)",
-            // "P (Phosphorus)",
-            // "S (Sulfur)",
-            // "Zn (Zinc)",
+            "Al (ICP) ",    // Aluminum
+            "B (ICP) ",     // Boron
+            "Ca (ICP) ",    // Calcium
+            "Cu (ICP) ",    // Copper
+            "Fe (ICP) ",    // Iron
+            "K (ICP) ",     // Potassium
+            "Mg (ICP) ",    // Magnesium
+            "Mn (ICP) ",    // Manganese
+            "Na (ICP) ",    // Sodium
+            "P (ICP) ",     // Phosphorus
+            "S (ICP) ",     // Sulfur
+            "Zn (ICP) ",    // Zinc
 
         };
 
         public static readonly string[] HMTests = {
 
-            "Cd (HM)",
-            "Ni (HM)",
-            "Pb (HM)"
+            "Cd (HM)",  // Cadmium
+            "Ni (HM)",  // Nickel
+            "Pb (HM)"   // Lead
 
         };
 

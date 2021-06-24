@@ -90,9 +90,11 @@
 
     private IList<TestDataModel> TestDatas;
 
-    private string CurrentDisplaySampleCode = "Amaranth";
+    private string CurrentDisplaySampleCode = Info.PlantCodes[0];
 
     protected override async Task OnInitializedAsync() {
+
+        Info.PopulateLists();
 
         using (var context = new PWSMDbContext())
         {

@@ -41,10 +41,25 @@
             // Delete test data too
             try {
 
+
                 var rowToDelete = await context.SampleCodeTable.FindAsync(RowId);
                 if (rowToDelete != null)
                 {
 
+                    @* var testRows = context.TestDataTable.Where(t => t.SampleCode.Equals(rowToDelete.Name)).ToList();
+                    foreach (var testRow in testRows)
+                    {
+                        context.TestDataTable.Remove(testRow);
+
+                    } *@
+
+                    foreach (var testRow in context.TestDataTable)
+                    {
+                        if (testRow.SampleCode.Equals(rowToDelete.Name))
+                        {
+                            context.Remove(testRow);
+                        }
+                    }
 
 
                     context.SampleCodeTable.Remove(rowToDelete);

@@ -65,7 +65,7 @@
 
 @code {
 
-    private IList<SampleCodeModel> SampleCodes;
+    private List<SampleCodeModel> SampleCodes;
 
     private string CreateSampleType = "Plant";
     private string CreateSampleCode = "";
@@ -135,6 +135,7 @@
             }
         }
 
+        Info.PopulateLists();
         await SetTable();
         StateHasChanged();
     }
