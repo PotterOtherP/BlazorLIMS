@@ -90,7 +90,7 @@
 
     private IList<TestDataModel> TestDatas;
 
-    private string CurrentDisplaySampleCode = Info.PlantCodes[0];
+    private string CurrentDisplaySampleCode = (Info.PlantCodes.Count > 0) ? Info.PlantCodes[0] : "";
 
     protected override async Task OnInitializedAsync() {
 

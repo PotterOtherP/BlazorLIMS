@@ -20,7 +20,7 @@
 
 <button @onclick="CreateRow" style="margin: 20px;">Create</button>
 
-<button @onclick="DeleteAllTestData" style="margin: 20px">Delete All Test Data</button>
+<button @onclick="DeleteEverything" style="margin: 20px">Delete Everything</button>
 
 <div style="display: flex; flex-direction: flex-row; ">
     @foreach (var test in TestMenu)
@@ -50,13 +50,16 @@
         {
             foreach (var item in SampleCodes)
             {
-                <SampleCodeRow
-                RowId=@item.Id
-                Name=@item.Name
-                Type=@item.Type
-                DefaultTests=@item.DefaultTestString
-                OnClickCallback="@SetTable"
-                />
+                if (item.Type.Equals(CreateSampleType))
+                {
+                    <SampleCodeRow
+                    RowId=@item.Id
+                    Name=@item.Name
+                    Type=@item.Type
+                    DefaultTests=@item.DefaultTestString
+                    OnClickCallback="@SetTable"
+                    />
+                }
             }
         }
     </tbody>
@@ -166,13 +169,29 @@
     }
 
 
-    private async void DeleteAllTestData() {
+    private async void DeleteEverything() {
 
         Console.WriteLine("Deleting...");
 
         using (var context = new PWSMDbContext())
         {
             IList<TestDataModel> testDataModels = await context.TestDataTable.ToListAsync();
+            IList<SampleCodeModel> sampleRowModels = await context.SampleCodeTable.ToListAsync();
+
+            while (sampleRowModels.Count > 0)
+            {
+                try {
+                    var modelToDelete = await context.SampleCodeTable.FindAsync(sampleRowModels[0].Id);
+                    context.SampleCodeTable.Remove(modelToDelete);
+                    await context.SaveChangesAsync();
+                    sampleRowModels = await context.SampleCodeTable.ToListAsync();
+
+                }
+                catch (Exception ex) {
+                    Console.WriteLine(ex.Message);
+                    return;
+                }
+            }
 
             while (testDataModels.Count > 0)
             {
@@ -185,11 +204,14 @@
                 }
                 catch (Exception ex) {
                     Console.WriteLine(ex.Message);
-                    break;
+                    return;
                 }
             }
 
         }
+
+        await SetTable();
+        StateHasChanged();
 
         Console.WriteLine("Done.");
     }
@@ -205,9 +227,14 @@
             }
 
             case "pH":
-            case "DW":
             {
                 return "N/A";
+            }
+
+            case "Biomass":
+            case "DW":
+            {
+                return "g";
             }
 
             default:
@@ -255,9 +282,17 @@
 
     protected override async Task OnInitializedAsync() {
 
+        Info.PopulateLists();
+
         SetSampleType("Plant");
 
         await SetTable();
+    }
+
+
+    private int CompareSampleCodeRows(SampleCodeModel s1, SampleCodeModel s2) {
+
+        return String.Compare(s1.Name, s2.Name);
     }
 
 
@@ -274,6 +309,9 @@
                 Console.WriteLine(ex.Message);
             }
         }
+
+
+        SampleCodes.Sort(CompareSampleCodeRows);
 
     }
 

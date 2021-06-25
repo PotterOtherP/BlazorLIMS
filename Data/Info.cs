@@ -14,10 +14,25 @@ namespace BlazorLIMS.Data {
 
         public static void PopulateLists() {
 
-            PlantCodes.Clear();
-            WasteCodes.Clear();
-            SolutionCodes.Clear();
-            MediaCodes.Clear();
+            if (PlantCodes == null)
+                PlantCodes = new List<string>();
+            else
+                PlantCodes.Clear();
+
+            if (WasteCodes == null)
+                WasteCodes = new List<string>();
+            else
+                WasteCodes.Clear();
+            
+            if (SolutionCodes == null)
+                SolutionCodes = new List<string>();
+            else
+                SolutionCodes.Clear();
+
+            if (MediaCodes == null)
+                MediaCodes = new List<string>();
+            else
+                MediaCodes.Clear();
 
             using (var context = new PWSMDbContext())
             {

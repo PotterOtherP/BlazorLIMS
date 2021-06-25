@@ -69,7 +69,7 @@
 
     private string CreateReportType = "Predictive";
     private string CreateSampleType = "Plant";
-    private string CreateSampleCode = Info.PlantCodes[0];
+    private string CreateSampleCode = (Info.PlantCodes.Count > 0) ? Info.PlantCodes[0] : "";
     private int CreateNumberOfSamples = 1;
     private DateTime CreateReportDate = DateTime.Now;
 
