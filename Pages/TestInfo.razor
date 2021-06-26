@@ -90,11 +90,16 @@
 
     private IList<TestDataModel> TestDatas;
 
-    private string CurrentDisplaySampleCode = (Info.PlantCodes.Count > 0) ? Info.PlantCodes[0] : "";
+    private string CurrentDisplaySampleCode = "";
 
     protected override async Task OnInitializedAsync() {
 
         Info.PopulateLists();
+
+        if (Info.PlantCodes != null && Info.PlantCodes.Count > 0)
+        {
+            CurrentDisplaySampleCode = Info.PlantCodes[0];
+        }
 
         using (var context = new PWSMDbContext())
         {

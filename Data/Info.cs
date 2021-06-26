@@ -258,18 +258,18 @@ namespace BlazorLIMS.Data {
 
         public static readonly string[] ICPTests = {
 
-            "Al (ICP) ",    // Aluminum
-            "B (ICP) ",     // Boron
-            "Ca (ICP) ",    // Calcium
-            "Cu (ICP) ",    // Copper
-            "Fe (ICP) ",    // Iron
-            "K (ICP) ",     // Potassium
-            "Mg (ICP) ",    // Magnesium
-            "Mn (ICP) ",    // Manganese
-            "Na (ICP) ",    // Sodium
-            "P (ICP) ",     // Phosphorus
-            "S (ICP) ",     // Sulfur
-            "Zn (ICP) ",    // Zinc
+            "Al (ICP)",    // Aluminum
+            "B (ICP)",     // Boron
+            "Ca (ICP)",    // Calcium
+            "Cu (ICP)",    // Copper
+            "Fe (ICP)",    // Iron
+            "K (ICP)",     // Potassium
+            "Mg (ICP)",    // Magnesium
+            "Mn (ICP)",    // Manganese
+            "Na (ICP)",    // Sodium
+            "P (ICP)",     // Phosphorus
+            "S (ICP)",     // Sulfur
+            "Zn (ICP)",    // Zinc
 
         };
 

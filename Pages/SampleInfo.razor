@@ -20,7 +20,7 @@
 
 <button @onclick="CreateRow" style="margin: 20px;">Create</button>
 
-<button @onclick="DeleteEverything" style="margin: 20px">Delete Everything</button>
+@* <button @onclick="DeleteEverything" style="margin: 20px">Delete Everything</button> *@
 
 <div style="display: flex; flex-direction: flex-row; ">
     @foreach (var test in TestMenu)
@@ -50,7 +50,10 @@
         {
             foreach (var item in SampleCodes)
             {
-                if (item.Type.Equals(CreateSampleType))
+                if (item.Type.Equals(CreateSampleType) ||
+                (item.Type.Equals("Waste") && (CreateSampleType.Equals("WasteLiquid")
+                                            || CreateSampleType.Equals("WasteSolid")))
+                )
                 {
                     <SampleCodeRow
                     RowId=@item.Id
@@ -153,6 +156,7 @@
 
         newTestData.LowValue = 0.0;
         newTestData.HighValue = 100.0;
+
         newTestData.Units = GetUnits(testName);
 
         using (var context = new PWSMDbContext())
@@ -221,6 +225,23 @@
 
         switch (testName)
         {
+            case "P (ICP)":
+            case "N":
+            case "K (ICP)":
+            case "Ca (ICP)":
+            case "Mg (ICP)":
+            case "S (ICP)":
+            {
+                if (CreateSampleType.Equals("Plant"))
+                    return "pct";
+            } break;
+
+            case "CCE":
+            case "DM":
+            {
+                return "pct";
+            }
+
             case "EC":
             {
                 return "mS/cm";
@@ -237,10 +258,16 @@
                 return "g";
             }
 
+            case "Bulk Density":
+            {
+                return "lb/cy";
+            }
+
             default:
                 return "ppm";
         }
 
+        return "ppm";
     }
 
 
