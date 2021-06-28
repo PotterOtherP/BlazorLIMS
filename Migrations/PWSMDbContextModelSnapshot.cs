@@ -71,6 +71,9 @@ namespace BlazorLIMS.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
+                    b.Property<string>("AssignedTestsString")
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("Comment")
                         .HasColumnType("TEXT");
 

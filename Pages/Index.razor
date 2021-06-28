@@ -13,10 +13,22 @@
     <h5>@prefix</h5>
     <h5>@Report.ReportType</h5>
 
-    foreach(SampleModel sample in @Report.Samples)
-    {
-        <p>Sample ID: @sample.LabId</p>
-    }
+    <table class="table">
+        <thead>
+            <th>ID</th>
+            <th>Sample</th>
+            <th>Tests</th>
+        </thead>
+        @foreach(SampleModel sample in @Report.Samples)
+        {
+            var letter = @sample.SampleType.Substring(0,1);
+            <tr>
+                <th>@letter@sample.LabId</th>
+                <th>@sample.SampleCode</th>
+                <th>@sample.AssignedTestsString</th>
+            </tr>
+        }
+    </table>
 
 }
 

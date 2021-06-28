@@ -6,7 +6,8 @@
 
 <h1 style="margin: 20px">PWSM Lab Receiving</h1>
 
-<select @bind="CreateSampleType" style="margin: 20px">
+<select value="@CreateSampleType" style="margin: 20px"
+   @onchange="(ui) => MenuChange(ui.Value.ToString())">
     <option value="Plant">Plant</option>
     <option value="Waste">Waste</option>
     <option value="Solution">Solution</option>
@@ -87,6 +88,8 @@
 
     private async void CreateReportFromForm() {
 
+        StateHasChanged();
+
         // Get next report number and sample numbers from database
         GetNextNumbers();
 
@@ -104,6 +107,13 @@
             s.LabId = NextSampleNumber + i;
             s.SampleType = CreateSampleType;
             s.SampleCode = CreateSampleCode;
+
+            using (var context = new PWSMDbContext())
+            {
+                var result = context.SampleCodeTable.First(row => row.Name.Equals(CreateSampleCode));
+                s.AssignedTestsString = result.DefaultTestString;
+            }
+
             CreatedReport.Samples.Add(s);
         }
 
@@ -147,5 +157,21 @@
 
         NextReportNumber += INIT_REPORT_NUMBER;
         NextSampleNumber += INIT_SAMPLE_NUMBER;
+    }
+
+    private void MenuChange(string type) {
+
+        Console.WriteLine("Inside the MenuChange method");
+
+        CreateSampleType = type;
+
+        if (type.Equals("Plant"))
+            CreateSampleCode = (Info.PlantCodes.Count > 0) ? Info.PlantCodes[0] : "";
+        else if (type.Equals("Waste"))
+            CreateSampleCode = (Info.WasteCodes.Count > 0) ? Info.WasteCodes[0] : "";
+        else if (type.Equals("Solution"))
+            CreateSampleCode = (Info.SolutionCodes.Count > 0) ? Info.SolutionCodes[0] : "";
+        else if (type.Equals("Media"))
+            CreateSampleCode = (Info.MediaCodes.Count > 0) ? Info.MediaCodes[0] : "";
     }
 }
