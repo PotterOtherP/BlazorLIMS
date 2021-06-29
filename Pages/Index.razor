@@ -2,31 +2,36 @@
 
 @using System;
 @using BlazorLIMS.Data;
+@using Microsoft.EntityFrameworkCore;
 
 
 <ReportCreationForm CreatedReport=@Report OnClickCallback="@CreateGrid"/>
 
+@* <button>Clear Report Database</button> *@
+
 @if (Report != null && Report.Samples != null)
 {
+    <button @onclick="PrintReportToConsole">Print to Console</button>
     string prefix = "R" + @Report.SampleType.Substring(0,1) + @Report.LabReportId;
 
-    <h5>@prefix</h5>
-    <h5>@Report.ReportType</h5>
-
     <table class="table">
+        <thead>
+            <th><h5>@prefix</h5></th>
+            <th><h5>@Report.ReportType</h5></th>
+            <th><h5>Save Report</h5></th>
+        </thead>
         <thead>
             <th>ID</th>
             <th>Sample</th>
             <th>Tests</th>
+            <th>Comment</th>
         </thead>
-        @foreach(SampleModel sample in @Report.Samples)
+        @foreach(SampleModel smpl in @Report.Samples)
         {
-            var letter = @sample.SampleType.Substring(0,1);
-            <tr>
-                <th>@letter@sample.LabId</th>
-                <th>@sample.SampleCode</th>
-                <th>@sample.AssignedTestsString</th>
-            </tr>
+            <GridSampleRow
+            sample=@smpl
+            Callback="@Refresh"
+            />
         }
     </table>
 
@@ -38,15 +43,65 @@
     
     private void CreateGrid() {
 
-        Console.WriteLine("CreateGrid() called.");
 
-        Console.WriteLine($"Report type: {Report.ReportType}");
-        Console.WriteLine($"Sample type: {Report.SampleType}");
-        Console.WriteLine($"Date Received: {Report.DateReceived}");
+    }
 
-        Console.WriteLine($"Report number: {Report.LabReportId}");
-        Console.WriteLine($"Sample number: {Report.Samples[0].LabId}");
+    private async void DeleteAllReports() {
 
+        using (var context = new PWSMDbContext())
+        {
+            IList<ReportModel> table = await context.PlantReportModels.ToListAsync();
+        }
+    }
+
+    private void PrintReportToConsole() {
+
+        Console.WriteLine();
+
+        foreach (SampleModel sample in Report.Samples)
+        {
+            Console.WriteLine($"{sample.SampleType.Substring(0,1)}{sample.LabId}\t"
+                + $"{sample.SampleCode}\t{sample.AssignedTestsString}\t"
+                + $"{sample.Comment}");
+        }
+    }
+
+    private async void SaveReportToDatabase() {
+
+        using (var context = new PWSMDbContext())
+        {
+            switch (Report.SampleType)
+            {
+                case "Plant":
+                {
+                    context.PlantReportModels.Add(Report);
+                } break;
+
+                case "Waste":
+                {
+                    context.WasteReportModels.Add(Report);
+                } break;
+
+                case "Solution":
+                {
+                    context.SolutionReportModels.Add(Report);
+                } break;
+
+                case "Media":
+                {
+                    context.MediaReportModels.Add(Report);
+                } break;
+
+                default: {} break;
+            }
+
+            await context.SaveChangesAsync();
+        }
+    }
+    
+    private void Refresh() {
+
+        StateHasChanged();
     }
 
     protected override void OnInitialized() {

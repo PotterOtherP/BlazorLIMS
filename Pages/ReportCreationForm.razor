@@ -58,7 +58,7 @@
     }
 </select>
 
-<input @bind="CreateNumberOfSamples" type="number" style="margin: 20px; width: 15%">
+<input @bind="CreateNumberOfSamples" type="number" min="1" max="50" style="margin: 20px; width: 15%">
 
 <input @bind="CreateReportDate" type="date" style="margin: 20px; width: 35%">
 
@@ -107,6 +107,7 @@
             s.LabId = NextSampleNumber + i;
             s.SampleType = CreateSampleType;
             s.SampleCode = CreateSampleCode;
+            s.Report = CreatedReport;
 
             using (var context = new PWSMDbContext())
             {
@@ -160,8 +161,6 @@
     }
 
     private void MenuChange(string type) {
-
-        Console.WriteLine("Inside the MenuChange method");
 
         CreateSampleType = type;
 

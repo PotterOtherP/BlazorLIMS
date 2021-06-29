@@ -24,5 +24,43 @@ namespace BlazorLIMS.Data {
 
         // Navigation property
         public List<SampleModel> Samples { get; set; }
+
+        public void DuplicateSample(int sampleId) {
+
+            int first = Samples[0].LabId;
+
+            SampleModel oldSample = Samples.Find(s => s.LabId == sampleId);
+            SampleModel newSample = new SampleModel();
+
+            newSample.SampleType = oldSample.SampleType;
+            newSample.SampleCode = oldSample.SampleCode;
+            newSample.Comment = oldSample.Comment;
+            newSample.AssignedTestsString = oldSample.AssignedTestsString;
+            newSample.LabId = oldSample.LabId + 1;
+            newSample.Report = this;
+
+            int newIndex = Samples.IndexOf(oldSample) + 1;
+
+            Samples.Insert(newIndex, newSample);
+
+            for (int i = 0; i < Samples.Count; ++i)
+            {
+                Samples[i].LabId = first + i;
+            }
+
+
+        }
+
+        public void RemoveSample(int sampleId) {
+
+            int first = Samples[0].LabId;
+
+            Samples.Remove(Samples.Find(s => s.LabId == sampleId));
+
+            for (int i = 0; i < Samples.Count; ++i)
+            {
+                Samples[i].LabId = first + i;
+            }
+        }
     }
 }

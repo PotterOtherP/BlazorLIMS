@@ -1,0 +1,80 @@
+@using BlazorLIMS.Data;
+@using System;
+
+<tr style="background-color: #aaeeaa; ">
+    @{
+        var letter = @sample.SampleType.Substring(0,1);
+
+        var menu = Info.PlantCodes;
+        if (@sample.SampleType.Equals("Waste")) menu = Info.WasteCodes;
+        if (@sample.SampleType.Equals("Solution")) menu = Info.SolutionCodes;
+        if (@sample.SampleType.Equals("Media")) menu = Info.MediaCodes;
+    }
+
+    <th>@letter@sample.LabId</th>
+    <th>
+        <select value=@sample.SampleCode
+            @onchange="(ui) => SampleChange(ui.Value.ToString())"
+        >
+            @foreach (var item in menu)
+            {
+                <option value=@item>@item</option>
+            }
+        </select>
+    </th>
+    <th>
+        @foreach (var item in @sample.AssignedTestsString.Split("|"))
+        {
+            @item <span>&nbsp;</span>
+        }
+    </th>
+    <th>
+        <input type="text" @bind=@sample.Comment>
+    </th>
+    <th>
+        <button @onclick="Copy">Copy</button>
+    </th>
+    <th>
+        <button @onclick="Delete">Delete</button>
+    </th>
+</tr>
+
+
+@code {
+
+    [Parameter]
+    public SampleModel sample { get; set; }
+
+    [Parameter]
+    public EventCallback Callback { get; set; }
+
+
+    private async void Copy() {
+
+        sample.Report.DuplicateSample(sample.LabId);
+
+        await Callback.InvokeAsync();
+    }
+
+    private async void Delete() {
+
+        sample.Report.RemoveSample(sample.LabId);
+
+        await Callback.InvokeAsync();
+    }
+
+    private async void SampleChange(string value) {
+
+        sample.SampleCode = value;
+
+        using (var context = new PWSMDbContext())
+        {
+            var result = context.SampleCodeTable.First(row => row.Name.Equals(sample.SampleCode));
+            sample.AssignedTestsString = result.DefaultTestString;
+        }
+
+        await Callback.InvokeAsync();
+    }
+
+
+}
