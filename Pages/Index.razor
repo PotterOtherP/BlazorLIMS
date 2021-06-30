@@ -18,7 +18,7 @@
         <thead>
             <th><h5>@prefix</h5></th>
             <th><h5>@Report.ReportType</h5></th>
-            <th><h5>Save Report</h5></th>
+            <th><button @onclick="SaveReportToDatabase">Save Report</button></th>
         </thead>
         <thead>
             <th>ID</th>
@@ -68,9 +68,24 @@
 
     private async void SaveReportToDatabase() {
 
+        Console.WriteLine("Saving report...");
+
         using (var context = new PWSMDbContext())
         {
-            switch (Report.SampleType)
+
+            foreach (SampleModel sample in Report.Samples)
+            {
+                Console.Write($"{sample.LabId}:");
+
+                foreach (string test in sample.AssignedTestsString.Split("|"))
+                {
+                    Console.Write($" {test}");
+                }
+
+                Console.WriteLine();
+            }
+
+            @* switch (Report.SampleType)
             {
                 case "Plant":
                 {
@@ -93,7 +108,7 @@
                 } break;
 
                 default: {} break;
-            }
+            } *@
 
             await context.SaveChangesAsync();
         }

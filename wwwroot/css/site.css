@@ -35,6 +35,10 @@ input[type=number]::-webkit-inner-spin-button {
     color: red;
 }
 
+.test-edit-menu {
+    display: grid; grid-template-columns: 1fr 1fr 1fr;
+}
+
 #blazor-error-ui {
     background: lightyellow;
     bottom: 0;

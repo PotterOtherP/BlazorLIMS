@@ -1,14 +1,32 @@
 @using BlazorLIMS.Data;
 @using System;
 
+@inject IJSRuntime JSRuntime;
+
 <tr style="background-color: #aaeeaa; ">
     @{
         var letter = @sample.SampleType.Substring(0,1);
 
         var menu = Info.PlantCodes;
-        if (@sample.SampleType.Equals("Waste")) menu = Info.WasteCodes;
-        if (@sample.SampleType.Equals("Solution")) menu = Info.SolutionCodes;
-        if (@sample.SampleType.Equals("Media")) menu = Info.MediaCodes;
+        testMenuArray = Info.PlantTestMenu;
+
+        if (@sample.SampleType.Equals("Waste")) 
+        {
+            menu = Info.WasteCodes;
+            testMenuArray = Info.WasteTestMenu;
+        }
+
+        if (@sample.SampleType.Equals("Solution")) 
+        {
+            menu = Info.SolutionCodes;
+            testMenuArray = Info.SolutionTestMenu;
+        }
+
+        if (@sample.SampleType.Equals("Media")) 
+        {
+            menu = Info.MediaCodes;
+            testMenuArray = Info.MediaTestMenu;
+        }
     }
 
     <th>@letter@sample.LabId</th>
@@ -23,10 +41,31 @@
         </select>
     </th>
     <th>
+        @{ var divId = $"{@sample.LabId}Div"; }
+
+        <div class="test-edit-menu" id=@divId style="display: none;">
+        
+        @foreach (var item in testMenuArray)
+        {
+            var chk = @sample.AssignedTestsString.StartsWith($"{item}|") ||
+                      @sample.AssignedTestsString.EndsWith($"|{item}") ||
+                      @sample.AssignedTestsString.Contains($"|{item}|");
+
+            var boxId = $"{@sample.LabId}{item}Box";
+
+            <div style="display: flex; flex-direction: flex-row;">
+            <input type="checkbox" value=@item id=@boxId
+            @onchange="TestChange"
+            checked=@chk>
+            <label for=@boxId>@item</label>
+            </div>
+        }
+        </div>
         @foreach (var item in @sample.AssignedTestsString.Split("|"))
         {
             @item <span>&nbsp;</span>
         }
+        <button @onclick="ToggleTestEditMenu">Edit</button>
     </th>
     <th>
         <input type="text" @bind=@sample.Comment>
@@ -47,6 +86,9 @@
 
     [Parameter]
     public EventCallback Callback { get; set; }
+
+    private string[] testMenuArray;
+    private bool testEditVisible = false;
 
 
     private async void Copy() {
@@ -74,6 +116,36 @@
         }
 
         await Callback.InvokeAsync();
+    }
+
+    private async void TestChange() {
+
+        string str = "";
+
+        foreach (var test in testMenuArray)
+        {
+            string bName = $"{sample.LabId}{test}Box";
+            var result = await JSRuntime.InvokeAsync<bool>("boxChecked", bName);
+
+            if (result)
+            {
+                str += test + "|";
+            }
+        }
+
+        Console.WriteLine(str);
+        sample.AssignedTestsString = str;
+        await Callback.InvokeAsync();
+    }
+
+    private async void ToggleTestEditMenu() {
+
+        string divId = $"{@sample.LabId}Div";
+
+        await JSRuntime.InvokeVoidAsync("toggleVisibility", divId, testEditVisible);
+
+        testEditVisible = !testEditVisible;
+
     }
 
 
