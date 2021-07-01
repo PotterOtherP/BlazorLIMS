@@ -108,6 +108,7 @@
             s.SampleType = CreateSampleType;
             s.SampleCode = CreateSampleCode;
             s.Report = CreatedReport;
+            s.AssignedTests = new List<SampleTestModel>();
 
             using (var context = new PWSMDbContext())
             {

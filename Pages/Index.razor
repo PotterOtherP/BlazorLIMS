@@ -5,7 +5,7 @@
 @using Microsoft.EntityFrameworkCore;
 
 
-<ReportCreationForm CreatedReport=@Report OnClickCallback="@CreateGrid"/>
+<ReportCreationForm CreatedReport=@Report OnClickCallback="@Refresh"/>
 
 @* <button>Clear Report Database</button> *@
 
@@ -40,11 +40,7 @@
 @code {
 
     private ReportModel Report = new ReportModel();
-    
-    private void CreateGrid() {
 
-
-    }
 
     private async void DeleteAllReports() {
 
@@ -66,6 +62,17 @@
         }
     }
 
+    private void AddTestToSample(SampleModel sample, TestDataModel row)
+    {
+        SampleTestModel stm = new SampleTestModel();
+        stm.Name = row.TestName;
+        stm.LowValue = row.LowValue;
+        stm.HighValue = row.HighValue;
+        stm.Units = row.Units;
+
+        sample.AssignedTests.Add(stm);
+    }
+
     private async void SaveReportToDatabase() {
 
         Console.WriteLine("Saving report...");
@@ -75,17 +82,36 @@
 
             foreach (SampleModel sample in Report.Samples)
             {
-                Console.Write($"{sample.LabId}:");
+                Console.WriteLine($"{sample.LabId}: {sample.AssignedTestsString}");
 
                 foreach (string test in sample.AssignedTestsString.Split("|"))
                 {
-                    Console.Write($" {test}");
+                    if (test.Equals("ICP") || test.Equals("HM"))
+                    {
+                        var rows = context.TestDataTable
+                        .Where(r => (r.TestName.Contains(test) && r.SampleCode.Equals(sample.SampleCode)))
+                        .ToList();
+
+                        foreach (var row in rows)
+                        {
+                            AddTestToSample(sample, row);
+                        }
+                    }
+
+                    else
+                    {
+                        var referenceRow = context.TestDataTable.Single(
+                            r => (r.TestName.Equals(test) && r.SampleCode.Equals(sample.SampleCode))
+                        );
+
+                        AddTestToSample(sample, referenceRow);
+                    }
                 }
 
                 Console.WriteLine();
             }
 
-            @* switch (Report.SampleType)
+            switch (Report.SampleType)
             {
                 case "Plant":
                 {
@@ -108,10 +134,13 @@
                 } break;
 
                 default: {} break;
-            } *@
+            }
 
             await context.SaveChangesAsync();
         }
+        
+        Report.Samples.Clear();
+        Report = new ReportModel();
     }
     
     private void Refresh() {

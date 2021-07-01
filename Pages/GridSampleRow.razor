@@ -49,7 +49,8 @@
         {
             var chk = @sample.AssignedTestsString.StartsWith($"{item}|") ||
                       @sample.AssignedTestsString.EndsWith($"|{item}") ||
-                      @sample.AssignedTestsString.Contains($"|{item}|");
+                      @sample.AssignedTestsString.Contains($"|{item}|") ||
+                      @sample.AssignedTestsString.Equals(item);
 
             var boxId = $"{@sample.LabId}{item}Box";
 
@@ -133,7 +134,14 @@
             }
         }
 
-        Console.WriteLine(str);
+        while (str.EndsWith("|"))
+        {
+            str = str.Substring(0, str.Length - 1);
+        }
+
+        if (str.Length <= 0)
+            str = "ICP";
+        
         sample.AssignedTestsString = str;
         await Callback.InvokeAsync();
     }
