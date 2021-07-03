@@ -1,0 +1,66 @@
+@page "/Worklist"
+
+@using Microsoft.EntityFrameworkCore;
+@using BlazorLIMS.Data;
+@using System;
+
+<button @onclick="DeleteAllReports" style="margin: 30px;">Delete All Reports</button>
+
+<table class="table">
+    <thead>
+        <th>Report ID</th>
+        <th>Type</th>
+        <th>Number of samples</th>
+    </thead>
+
+</table>
+
+@code {
+
+    List<ReportModel> savedReports; 
+
+    private async void DeleteAllReports() {
+
+        using (var context = new PWSMDbContext())
+        {
+            var reports = await context.ReportModels.ToListAsync();
+            var samples = await context.SampleModels.ToListAsync();
+            var tests = await context.SampleTestModels.ToListAsync();
+
+            try {
+                context.SampleTestModels.RemoveRange(tests);
+                context.SampleModels.RemoveRange(samples);
+                context.ReportModels.RemoveRange(reports);
+            }
+
+            catch (Exception ex) {
+                Console.WriteLine(ex.Message);
+            }
+
+            await context.SaveChangesAsync();
+        }
+    }
+
+    protected override async Task OnInitializedAsync() {
+
+        using (var context = new PWSMDbContext())
+        {
+            savedReports = await context.ReportModels
+            .Include("Samples.AssignedTests")
+            .ToListAsync();
+
+        }
+
+        foreach (var report in savedReports)
+        {
+            Console.Write($"{report.LabReportId}\t{report.SampleType}\t{report.ReportType}");
+            Console.WriteLine($"\t{report.Samples.Count}");
+
+            foreach (var sample in report.Samples)
+            {
+                Console.WriteLine($"\t{sample.SampleCode}\t{sample.AssignedTestsString}");
+            }
+
+        }
+    }
+}

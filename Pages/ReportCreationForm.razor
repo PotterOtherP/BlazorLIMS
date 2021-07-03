@@ -108,6 +108,7 @@
             s.SampleType = CreateSampleType;
             s.SampleCode = CreateSampleCode;
             s.Report = CreatedReport;
+            s.ReportModelId = CreatedReport.ReportModelId;
             s.AssignedTests = new List<SampleTestModel>();
 
             using (var context = new PWSMDbContext())
@@ -127,34 +128,10 @@
 
         using (var context = new PWSMDbContext())
         {
-            switch (CreateSampleType)
-            {
-                case "Plant":
-                {
-                    NextReportNumber = context.PlantReportModels.Count();
-                    NextSampleNumber = context.PlantSampleModels.Count();
-                } break;
-
-                case "Waste":
-                {
-                    NextReportNumber = context.WasteReportModels.Count();
-                    NextSampleNumber = context.WasteSampleModels.Count();
-                } break;
-
-                case "Solution":
-                {
-                    NextReportNumber = context.SolutionReportModels.Count();
-                    NextSampleNumber = context.SolutionSampleModels.Count();
-                } break;
-
-                case "Media":
-                {
-                    NextReportNumber = context.MediaReportModels.Count();
-                    NextSampleNumber = context.MediaSampleModels.Count();
-                } break;
-
-                default: {} break;
-            }
+            NextReportNumber = context.ReportModels
+                .Where(r => r.SampleType.Equals(CreateSampleType)).ToList().Count;
+            NextSampleNumber = context.SampleModels
+                .Where(s => s.SampleType.Equals(CreateSampleType)).ToList().Count;
         }
 
         NextReportNumber += INIT_REPORT_NUMBER;

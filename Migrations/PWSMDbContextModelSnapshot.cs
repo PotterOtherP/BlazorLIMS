@@ -42,7 +42,7 @@ namespace BlazorLIMS.Migrations
 
                     b.HasKey("ReportModelId");
 
-                    b.ToTable("ReportModel");
+                    b.ToTable("ReportModels");
                 });
 
             modelBuilder.Entity("BlazorLIMS.Data.SampleCodeModel", b =>
@@ -102,7 +102,7 @@ namespace BlazorLIMS.Migrations
 
                     b.HasIndex("ReportModelId");
 
-                    b.ToTable("SampleModel");
+                    b.ToTable("SampleModels");
                 });
 
             modelBuilder.Entity("BlazorLIMS.Data.SampleTestModel", b =>
@@ -133,7 +133,7 @@ namespace BlazorLIMS.Migrations
 
                     b.HasIndex("SampleModelId");
 
-                    b.ToTable("SampleTestModel");
+                    b.ToTable("SampleTestModels");
                 });
 
             modelBuilder.Entity("BlazorLIMS.Data.TestDataModel", b =>
