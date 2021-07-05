@@ -38,6 +38,7 @@ namespace BlazorLIMS.Data {
             newSample.SampleCode = oldSample.SampleCode;
             newSample.Comment = oldSample.Comment;
             newSample.AssignedTestsString = oldSample.AssignedTestsString;
+            newSample.AssignedTests = new List<SampleTestModel>();
             newSample.LabId = oldSample.LabId + 1;
             newSample.Report = this;
 
@@ -48,6 +49,7 @@ namespace BlazorLIMS.Data {
             for (int i = 0; i < Samples.Count; ++i)
             {
                 Samples[i].LabId = first + i;
+                Samples[i].LabIdFull = $"{Samples[i].SampleType.Substring(0,1)}{Samples[i].LabId}";
             }
 
 
@@ -62,6 +64,7 @@ namespace BlazorLIMS.Data {
             for (int i = 0; i < Samples.Count; ++i)
             {
                 Samples[i].LabId = first + i;
+                Samples[i].LabIdFull = $"{Samples[i].SampleType.Substring(0,1)}{Samples[i].LabId}";
             }
         }
     }

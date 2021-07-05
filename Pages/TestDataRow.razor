@@ -12,7 +12,7 @@
         style="background-color: white;"
         @onchange="(ui) => UpdateHighValue(Convert.ToDouble(ui.Value))">
     </th>
-    <th>
+    @* <th>
         <select value="@Units"
         @onchange="(ui) => UpdateUnits(ui.Value.ToString())">
             <option value="g">g</option>
@@ -23,7 +23,8 @@
             <option value="lb/cy">lb/cy</option>
             <option value="N/A">N/A</option>
         </select>
-    </th>
+    </th> *@
+    <th>@Units</th>
 </tr>
 
 @code {

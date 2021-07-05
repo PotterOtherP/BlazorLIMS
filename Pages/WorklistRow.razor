@@ -3,8 +3,8 @@
 @using System;
 
 <tr>
-    <th></th>
     <th>@sample.LabIdFull</th>
+    <th>@sample.SampleCode</th>
     @if (@sample.SampleType.Equals("Waste"))
     {
         testMenu = Info.WasteTestMenu;

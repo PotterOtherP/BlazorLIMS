@@ -91,7 +91,13 @@
 
                         foreach (var row in rows)
                         {
-                            AddTestToSample(sample, row);
+                            try {
+                                AddTestToSample(sample, row);
+                            }
+                            catch (Exception ex) {
+                                Console.WriteLine($"Failed with {sample.LabId}, {row.TestName}");
+                                Console.WriteLine(ex.Message);
+                            }
                         }
                     }
 

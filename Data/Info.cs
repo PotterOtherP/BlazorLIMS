@@ -210,6 +210,20 @@ namespace BlazorLIMS.Data {
 
         };
 
+        public static readonly string[] PlantTestMenuUnits = {
+
+            "",
+            "g",
+            "pct",
+            "ppm",
+            "g",
+            "",
+            "ppm",
+            "pct",
+            "ppm",
+
+        };
+
         public static readonly string[] WasteTestMenu = {
 
             "ICP",
@@ -228,6 +242,24 @@ namespace BlazorLIMS.Data {
 
         };
 
+        public static readonly string[] WasteTestMenuUnits = {
+
+            "",
+            "ppm",
+            "pct",
+            "ppm",
+            "pct",
+            "mS/cm",
+            "",
+            "ppm",
+            "ppm",
+            "ppm",
+            "",
+            "ppm",
+            "ppm"
+
+        };
+
         public static readonly string[] SolutionTestMenu = {
 
             "ICP",
@@ -242,6 +274,20 @@ namespace BlazorLIMS.Data {
 
         };
 
+        public static readonly string[] SolutionTestMenuUnits = {
+
+            "",
+            "ppm",
+            "ppm",
+            "mS/cm",
+            "",
+            "ppm",
+            "ppm",
+            "",
+            "ppm"
+
+        };
+
         public static readonly string[] MediaTestMenu = {
 
             "ICP",
@@ -253,6 +299,20 @@ namespace BlazorLIMS.Data {
             "NH4/NO3",
             "pH",
             "Urea"
+
+        };
+
+        public static readonly string[] MediaTestMenuUnits = {
+
+            "",
+            "lb/cy",
+            "ppm",
+            "mS/cm",
+            "",
+            "ppm",
+            "ppm",
+            "",
+            "ppm"
 
         };
 

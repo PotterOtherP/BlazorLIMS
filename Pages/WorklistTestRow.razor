@@ -4,7 +4,11 @@
 {
     @foreach (var test in Info.PlantTestMenu)
     {
-        <th>@test</th>
+        var units = Info.PlantTestMenuUnits[Array.IndexOf(Info.PlantTestMenu, @test)];
+        if (units.Length > 0)
+            units = $"({units})";
+        string str = $"{@test} {@units}";
+        <th>@str</th>
     }
 }
 
@@ -12,7 +16,11 @@ else if (@SampleType.Equals("Waste"))
 {
     @foreach (var test in Info.WasteTestMenu)
     {
-        <th>@test</th>
+        var units = Info.WasteTestMenuUnits[Array.IndexOf(Info.WasteTestMenu, @test)];
+        if (units.Length > 0)
+            units = $"({units})";
+        string str = $"{@test} {@units}";
+        <th>@str</th>
     }
 }
 
@@ -20,7 +28,11 @@ else if (@SampleType.Equals("Solution"))
 {
     @foreach (var test in Info.SolutionTestMenu)
     {
-        <th>@test</th>
+        var units = Info.SolutionTestMenuUnits[Array.IndexOf(Info.SolutionTestMenu, @test)];
+        if (units.Length > 0)
+            units = $"({units})";
+        string str = $"{@test} {@units}";
+        <th>@str</th>
     }
 }
 
@@ -28,7 +40,11 @@ else if (@SampleType.Equals("Media"))
 {
     @foreach (var test in Info.MediaTestMenu)
     {
-        <th>@test</th>
+        var units = Info.MediaTestMenuUnits[Array.IndexOf(Info.MediaTestMenu, @test)];
+        if (units.Length > 0)
+            units = $"({units})";
+        string str = $"{@test} {@units}";
+        <th>@str</th>
     }
 }
 
@@ -37,7 +53,5 @@ else if (@SampleType.Equals("Media"))
 
     [Parameter]
     public string SampleType { get; set; }
-
-
 
 }
