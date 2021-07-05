@@ -1,0 +1,62 @@
+@using Microsoft.EntityFrameworkCore;
+@using BlazorLIMS.Data;
+@using System;
+
+<tr>
+    <th></th>
+    <th>@sample.LabIdFull</th>
+    @if (@sample.SampleType.Equals("Waste"))
+    {
+        testMenu = Info.WasteTestMenu;
+    }
+
+    else if (@sample.SampleType.Equals("Solution"))
+    {
+        testMenu = Info.SolutionTestMenu;
+    }
+
+    else if (@sample.SampleType.Equals("Media'"))
+    {
+        testMenu = Info.MediaTestMenu;
+    }
+
+    @foreach (var name in testMenu)
+    {
+        @if (@sample.AssignedTestsString.Contains($"|{@name}|")
+            || @sample.AssignedTestsString.StartsWith($"{@name}|")
+            || @sample.AssignedTestsString.EndsWith($"|{@name}"))
+        {
+            @if (@name.Equals("ICP") || @name.Equals("HM"))
+            {
+                <th>@name</th>
+            }
+
+            else
+            {
+                var testModel = @sample.AssignedTests.Find(t => (t.Name.Equals(@name)));
+                <TestValueInput test=@testModel Callback="@Refresh"/>
+                @* <th>@name</th> *@
+            }
+
+        }
+        else
+        {
+            <th>-</th>
+        }
+    }
+    
+</tr>
+
+@code {
+
+    [Parameter]
+    public SampleModel sample { get; set; }
+
+    private string[] testMenu = Info.PlantTestMenu;
+
+
+    private void Refresh() {
+        StateHasChanged();
+    } 
+
+}

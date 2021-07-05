@@ -11,6 +11,8 @@ namespace BlazorLIMS.Data {
 
         public int LabReportId { get; set; }
 
+        public string LabReportIdFull { get; set; }
+
         public string SampleType { get; set; }
 
         public string ReportType { get; set; }

@@ -1,0 +1,53 @@
+@using Microsoft.EntityFrameworkCore;
+@using BlazorLIMS.Data;
+@using System;
+
+<style>
+    input[type=number]::-webkit-inner-spin-button, 
+    input[type=number]::-webkit-outer-spin-button { 
+    -webkit-appearance: none; 
+    }
+
+    input[type=number] {
+    -moz-appearance: textfield;
+}
+</style>
+
+
+<th>
+    <input type="number" value="@test.MeasuredValue"
+    @onchange="(ui) => UpdateTestValue(ui.Value)">
+</th>
+
+@code {
+
+    [Parameter]
+    public SampleTestModel test { get; set; }
+
+    [Parameter]
+    public EventCallback Callback { get; set; }
+
+    private async void UpdateTestValue(Object obj)
+    {
+        double value = test.MeasuredValue;
+
+        try {
+            value = Convert.ToDouble(obj);
+        }
+        catch (Exception ex) {
+            Console.WriteLine(ex.Message);
+            return;
+        }
+
+        Console.WriteLine($"UpdateTestValue() called with value {value} and testModelId {test.Id}.");
+
+        using (var context = new PWSMDbContext())
+        {
+            var testToUpdate = await context.SampleTestModels.FindAsync(test.Id);
+
+            testToUpdate.MeasuredValue = value;
+
+            await context.SaveChangesAsync();
+        }
+    }
+}

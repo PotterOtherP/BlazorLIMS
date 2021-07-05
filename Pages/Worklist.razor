@@ -6,18 +6,44 @@
 
 <button @onclick="DeleteAllReports" style="margin: 30px;">Delete All Reports</button>
 
+<select @bind="DisplayType">
+    <option value="Plant">Plant</option>
+    <option value="Waste">Waste</option>
+    <option value="Solution">Solution</option>
+    <option value="Media">Media</option>
+</select>
+
 <table class="table">
     <thead>
         <th>Report ID</th>
-        <th>Type</th>
-        <th>Number of samples</th>
+        <th>Sample</th>
+        <WorklistTestRow SampleType=@DisplayType />
     </thead>
+
+    @foreach (var report in savedReports)
+    {
+        @if (report.SampleType.Equals(DisplayType))
+        {
+            
+            <tr>
+                <th>@report.LabReportIdFull - @report.ReportType</th>
+            </tr>
+            
+            @foreach (var s in @report.Samples)
+            {
+                <WorklistRow sample=@s />
+            }
+
+        }
+    }
 
 </table>
 
 @code {
 
-    List<ReportModel> savedReports; 
+    private List<ReportModel> savedReports;
+
+    private string DisplayType = "Plant"; 
 
     private async void DeleteAllReports() {
 
@@ -48,18 +74,6 @@
             savedReports = await context.ReportModels
             .Include("Samples.AssignedTests")
             .ToListAsync();
-
-        }
-
-        foreach (var report in savedReports)
-        {
-            Console.Write($"{report.LabReportId}\t{report.SampleType}\t{report.ReportType}");
-            Console.WriteLine($"\t{report.Samples.Count}");
-
-            foreach (var sample in report.Samples)
-            {
-                Console.WriteLine($"\t{sample.SampleCode}\t{sample.AssignedTestsString}");
-            }
 
         }
     }

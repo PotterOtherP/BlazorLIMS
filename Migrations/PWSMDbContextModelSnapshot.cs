@@ -34,6 +34,9 @@ namespace BlazorLIMS.Migrations
                     b.Property<int>("LabReportId")
                         .HasColumnType("INTEGER");
 
+                    b.Property<string>("LabReportIdFull")
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("ReportType")
                         .HasColumnType("TEXT");
 
@@ -85,6 +88,9 @@ namespace BlazorLIMS.Migrations
 
                     b.Property<int>("LabId")
                         .HasColumnType("INTEGER");
+
+                    b.Property<string>("LabIdFull")
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("LabReportIdFull")
                         .HasColumnType("TEXT");

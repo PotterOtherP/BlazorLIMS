@@ -1,0 +1,43 @@
+@using BlazorLIMS.Data;
+
+@if (@SampleType.Equals("Plant"))
+{
+    @foreach (var test in Info.PlantTestMenu)
+    {
+        <th>@test</th>
+    }
+}
+
+else if (@SampleType.Equals("Waste"))
+{
+    @foreach (var test in Info.WasteTestMenu)
+    {
+        <th>@test</th>
+    }
+}
+
+else if (@SampleType.Equals("Solution"))
+{
+    @foreach (var test in Info.SolutionTestMenu)
+    {
+        <th>@test</th>
+    }
+}
+
+else if (@SampleType.Equals("Media"))
+{
+    @foreach (var test in Info.MediaTestMenu)
+    {
+        <th>@test</th>
+    }
+}
+
+
+@code {
+
+    [Parameter]
+    public string SampleType { get; set; }
+
+
+
+}

@@ -95,6 +95,7 @@
 
         CreatedReport.LabReportId = NextReportNumber;
         CreatedReport.SampleType = CreateSampleType;
+        CreatedReport.LabReportIdFull = $"R{CreateSampleType.Substring(0,1)}{NextReportNumber}";
         CreatedReport.ReportType = CreateReportType;
         CreatedReport.IsComplete = false;
         CreatedReport.IsDeleted = false;
@@ -105,6 +106,7 @@
         {
             var s = new SampleModel();
             s.LabId = NextSampleNumber + i;
+            s.LabIdFull = $"{CreateSampleType.Substring(0,1)}{s.LabId}";
             s.SampleType = CreateSampleType;
             s.SampleCode = CreateSampleCode;
             s.Report = CreatedReport;

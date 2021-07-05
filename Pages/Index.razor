@@ -12,11 +12,10 @@
 @if (Report != null && Report.Samples != null)
 {
     <button @onclick="PrintReportToConsole">Print to Console</button>
-    string prefix = "R" + @Report.SampleType.Substring(0,1) + @Report.LabReportId;
 
     <table class="table">
         <thead>
-            <th><h5>@prefix</h5></th>
+            <th><h5>@Report.LabReportIdFull</h5></th>
             <th><h5>@Report.ReportType</h5></th>
             <th><button @onclick="SaveReportToDatabase">Save Report</button></th>
         </thead>
@@ -67,7 +66,13 @@
 
     private async void SaveReportToDatabase() {
 
-        Console.WriteLine("Saving report...");
+        if (Report.Samples.Count < 1)
+        {
+            Console.WriteLine("Report must have at least one sample.");
+            return;
+        }
+
+        Console.WriteLine($"Saving report... {Report.LabReportIdFull} {Report.SampleType}, {Report.ReportType}");
 
         using (var context = new PWSMDbContext())
         {
