@@ -17,15 +17,24 @@ namespace BlazorLIMS.Data {
 
         public string ReportType { get; set; }
 
-        // True when all tests have measurements
-        public bool IsComplete { get; set; }
-        
-        public bool IsDeleted { get; set; }
+        public bool Deleted { get; set; }
 
         public DateTime DateReceived { get; set; }
 
         // Navigation property
         public List<SampleModel> Samples { get; set; }
+
+        public bool IsComplete() {
+
+            foreach (var sample in Samples)
+            {
+                if (!sample.IsComplete())
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
 
         public void DuplicateSample(int sampleId) {
 

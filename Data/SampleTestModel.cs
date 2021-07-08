@@ -11,14 +11,14 @@ namespace BlazorLIMS.Data {
         public double HighValue { get; set; }
         public string Units { get; set; }
 
-        public double MeasuredValue { get; set; }
+        public double? MeasuredValue { get; set; }
 
         public bool IsNormal() {
 
             return (MeasuredValue >= LowValue && MeasuredValue <= HighValue);
         }
 
-        public double Percentile() {
+        public double? Percentile() {
 
             if ((HighValue - LowValue) == 0)
             {

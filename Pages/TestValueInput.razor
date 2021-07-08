@@ -10,7 +10,8 @@
 
     input[type=number] {
     -moz-appearance: textfield;
-}
+    width: 65px;
+    }
 </style>
 
 
@@ -29,7 +30,7 @@
 
     private async void UpdateTestValue(Object obj)
     {
-        double value = test.MeasuredValue;
+        double? value = test.MeasuredValue;
 
         try {
             value = Convert.ToDouble(obj);
@@ -49,5 +50,7 @@
 
             await context.SaveChangesAsync();
         }
+
+        await Callback.InvokeAsync();
     }
 }

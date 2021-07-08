@@ -97,8 +97,6 @@
         CreatedReport.SampleType = CreateSampleType;
         CreatedReport.LabReportIdFull = $"R{CreateSampleType.Substring(0,1)}{NextReportNumber}";
         CreatedReport.ReportType = CreateReportType;
-        CreatedReport.IsComplete = false;
-        CreatedReport.IsDeleted = false;
         CreatedReport.DateReceived = CreateReportDate;
         CreatedReport.Samples = new List<SampleModel>();
 

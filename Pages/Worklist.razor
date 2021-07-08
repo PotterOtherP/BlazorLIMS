@@ -4,9 +4,7 @@
 @using BlazorLIMS.Data;
 @using System;
 
-<button @onclick="DeleteAllReports" style="margin: 30px;">Delete All Reports</button>
-
-<select @bind="DisplayType">
+<select @bind="DisplayType" style="margin: 25px;">
     <option value="Plant">Plant</option>
     <option value="Waste">Waste</option>
     <option value="Solution">Solution</option>
@@ -16,7 +14,7 @@
 <table class="table">
     <thead>
         <th>Report ID</th>
-        <th>Sample</th>
+        <th></th>
         <WorklistTestRow SampleType=@DisplayType />
     </thead>
 
@@ -27,17 +25,26 @@
             
             <tr>
                 <th>@report.LabReportIdFull - @report.ReportType</th>
+                @if (report.IsComplete())
+                {
+                    <th style="color: green;">Finalize</th>
+                }
+                else{
+                    <th style="color: red;">Incomplete</th>
+                }
             </tr>
             
             @foreach (var s in @report.Samples)
             {
-                <WorklistRow sample=@s />
+                <WorklistRow sample=@s Callback="OnInitializedAsync"/>
             }
 
         }
     }
 
 </table>
+
+<button @onclick="DeleteAllReports" style="margin: 30px;">Delete All Reports</button>
 
 @code {
 
@@ -65,6 +72,9 @@
 
             await context.SaveChangesAsync();
         }
+
+        savedReports.Clear();
+
     }
 
     protected override async Task OnInitializedAsync() {

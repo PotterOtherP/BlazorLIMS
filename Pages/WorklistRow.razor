@@ -26,9 +26,40 @@
             || @sample.AssignedTestsString.StartsWith($"{@name}|")
             || @sample.AssignedTestsString.EndsWith($"|{@name}"))
         {
-            @if (@name.Equals("ICP") || @name.Equals("HM"))
+            @if (@name.Equals("ICP"))
             {
-                <th>@name</th>
+                if (@sample.ICPAssigned() && !@sample.ICPComplete())
+                {
+                    <th>O</th>
+                }
+
+                else if (@sample.ICPAssigned() && @sample.ICPComplete())
+                {
+                    <th>X</th>
+                }
+
+                else
+                {
+                    <th>-</th>
+                }
+            }
+
+            else if (@name.Equals("HM"))
+            {
+                if (@sample.HMAssigned() && !@sample.HMComplete())
+                {
+                    <th>O</th>
+                }
+
+                else if (@sample.HMAssigned() && @sample.HMComplete())
+                {
+                    <th>X</th>
+                }
+
+                else
+                {
+                    <th>-</th>
+                }
             }
 
             else
@@ -52,10 +83,15 @@
     [Parameter]
     public SampleModel sample { get; set; }
 
+    [Parameter]
+    public EventCallback Callback { get; set; }
+
     private string[] testMenu = Info.PlantTestMenu;
 
 
-    private void Refresh() {
+    private async void Refresh() {
+        
+        await Callback.InvokeAsync();
         StateHasChanged();
     } 
 

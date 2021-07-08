@@ -1,0 +1,98 @@
+@page "/HM"
+
+@using Microsoft.EntityFrameworkCore;
+@using BlazorLIMS.Data;
+@using System;
+
+<button @onclick="ReadRandomData">Read Data</button>
+
+<table class="table">
+    <thead>
+        <th>Sample ID</th>
+        <th>Sample Code</th>
+        <th>Cd</th>
+        <th>Ni</th>
+        <th>Pb</th>
+    </thead>
+
+    @foreach (var s in HMSamples)
+    {
+        <tr>
+            <th>@s.LabIdFull</th>
+            <th>@s.SampleCode</th>
+            @foreach (var t in s.AssignedTests)
+            {
+                if (t.Name.Contains("HM"))
+                {
+                    <TestValueInput test=@t />
+                }
+            }
+        </tr>
+    }
+</table>
+
+
+@code {
+
+    private List<ReportModel> savedReports;
+    private List<SampleModel> HMSamples;
+
+
+    private int CompareTestNames(SampleTestModel m1, SampleTestModel m2) {
+
+        return String.Compare(m1.Name, m2.Name);
+    }
+
+    protected override async Task OnInitializedAsync() {
+
+        using (var context = new PWSMDbContext())
+        {
+            savedReports = await context.ReportModels
+            .Include("Samples.AssignedTests")
+            .ToListAsync();
+
+        }
+
+        HMSamples = new List<SampleModel>();
+
+        foreach (var report in savedReports)
+        {
+            foreach (var sample in report.Samples)
+            {
+                sample.AssignedTests.Sort(CompareTestNames);
+
+                if (sample.HMAssigned())
+                    HMSamples.Add(sample);
+            }
+        }
+    }
+
+    private async void ReadRandomData() {
+
+        using (var context = new PWSMDbContext())
+        {
+            foreach (var sample in HMSamples)
+            {
+                foreach (var test in sample.AssignedTests)
+                {
+                    if (test.MeasuredValue != null)
+                        continue;
+
+                    if (!test.Name.Contains("HM"))
+                        continue;
+
+                    var rando = new Random();
+                    int result = rando.Next(25, 999);
+
+                    test.MeasuredValue = result;
+
+                    var testModelToUpdate = await context.SampleTestModels.FindAsync(test.Id);
+                    testModelToUpdate.MeasuredValue = result;
+
+                }
+            }
+
+            await context.SaveChangesAsync();
+        }
+    }
+}

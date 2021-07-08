@@ -29,5 +29,54 @@ namespace BlazorLIMS.Data
         public int ReportModelId { get; set; }
         public ReportModel Report { get; set; }
         public string LabReportIdFull { get; set; }
+
+        public bool HMAssigned() {
+
+            return AssignedTestsString.Contains("|HM|") ||
+                   AssignedTestsString.StartsWith("HM|") ||
+                   AssignedTestsString.EndsWith("|HM");
+        }
+
+        public bool ICPAssigned() {
+
+            return AssignedTestsString.Contains("|ICP|") ||
+                   AssignedTestsString.StartsWith("ICP|") ||
+                   AssignedTestsString.EndsWith("|ICP");
+        }
+
+        public bool HMComplete() {
+
+            foreach (var test in AssignedTests)
+            {
+                if (test.Name.Contains("HM") && test.MeasuredValue == null)
+                    return false;
+
+            }
+            
+            return true;
+        }
+
+        public bool ICPComplete() {
+
+            foreach (var test in AssignedTests)
+            {
+                if (test.Name.Contains("ICP") && test.MeasuredValue == null)
+                    return false;
+
+            }
+
+            return true;
+        }
+
+        public bool IsComplete() {
+
+            foreach (var test in AssignedTests)
+            {
+                if (test.MeasuredValue == null)
+                    return false;
+            }
+
+            return true;
+        }
     }
 }

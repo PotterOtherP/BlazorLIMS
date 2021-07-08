@@ -25,10 +25,7 @@ namespace BlazorLIMS.Migrations
                     b.Property<DateTime>("DateReceived")
                         .HasColumnType("TEXT");
 
-                    b.Property<bool>("IsComplete")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<bool>("IsDeleted")
+                    b.Property<bool>("Deleted")
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("LabReportId")
@@ -123,7 +120,7 @@ namespace BlazorLIMS.Migrations
                     b.Property<double>("LowValue")
                         .HasColumnType("REAL");
 
-                    b.Property<double>("MeasuredValue")
+                    b.Property<double?>("MeasuredValue")
                         .HasColumnType("REAL");
 
                     b.Property<string>("Name")
