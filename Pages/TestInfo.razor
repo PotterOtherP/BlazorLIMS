@@ -95,6 +95,8 @@
 
     protected override async Task OnInitializedAsync() {
 
+        Info.CheckUser();
+
         Info.PopulateLists();
 
         if (Info.PlantCodes != null && Info.PlantCodes.Count > 0)

@@ -55,6 +55,8 @@
 
     protected override async Task OnInitializedAsync() {
 
+        Info.CheckUser();
+
         using (var context = new PWSMDbContext())
         {
             savedReports = await context.ReportModels

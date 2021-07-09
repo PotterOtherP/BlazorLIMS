@@ -310,6 +310,8 @@
 
     protected override async Task OnInitializedAsync() {
 
+        Info.CheckUser();
+
         Info.PopulateLists();
 
         SetSampleType("Plant");

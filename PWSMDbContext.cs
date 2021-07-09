@@ -24,6 +24,8 @@ namespace BlazorLIMS {
         public DbSet<TestDataModel> TestDataTable { get; set; }
         public DbSet<SampleCodeModel> SampleCodeTable { get; set; }
 
+        public DbSet<UserModel> UserModels { get; set; }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseSqlite("Data Source=PWSMDatabase.db");

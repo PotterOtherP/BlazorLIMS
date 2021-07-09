@@ -7,6 +7,29 @@ namespace BlazorLIMS.Data {
 
     public class Info {
 
+        public static UserModel CurrentUser;
+
+        public static void CheckUser() {
+
+
+            if (CurrentUser == null)
+            {
+                Console.WriteLine("Creating CurrentUser object");
+                CurrentUser = new UserModel();
+                CurrentUser.UserModelId = -1;
+                CurrentUser.Password = "defaultPass";
+                CurrentUser.Username = "defaultGuest";
+                CurrentUser.UserRole = Role.GUEST;
+            }
+
+            else
+            {
+                Console.WriteLine("CurrentUser exists");
+            }
+
+        }
+
+
         public static List<string> PlantCodes;
         public static List<string> WasteCodes;
         public static List<string> SolutionCodes;
