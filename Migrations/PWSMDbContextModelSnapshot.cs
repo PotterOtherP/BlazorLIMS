@@ -165,6 +165,26 @@ namespace BlazorLIMS.Migrations
                     b.ToTable("TestDataTable");
                 });
 
+            modelBuilder.Entity("BlazorLIMS.Data.UserModel", b =>
+                {
+                    b.Property<int>("UserModelId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Password")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("UserRole")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Username")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("UserModelId");
+
+                    b.ToTable("UserModels");
+                });
+
             modelBuilder.Entity("BlazorLIMS.Data.SampleModel", b =>
                 {
                     b.HasOne("BlazorLIMS.Data.ReportModel", "Report")

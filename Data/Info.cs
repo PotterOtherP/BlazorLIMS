@@ -17,15 +17,17 @@ namespace BlazorLIMS.Data {
                 Console.WriteLine("Creating CurrentUser object");
                 CurrentUser = new UserModel();
                 CurrentUser.UserModelId = -1;
-                CurrentUser.Password = "defaultPass";
+                CurrentUser.Password = "";
                 CurrentUser.Username = "defaultGuest";
                 CurrentUser.UserRole = Role.GUEST;
             }
 
             else
             {
-                Console.WriteLine("CurrentUser exists");
+                // Console.WriteLine("CurrentUser exists");
             }
+
+            Console.WriteLine($"Current role: {CurrentUser.UserRole}");
 
         }
 

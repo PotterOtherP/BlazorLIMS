@@ -1,4 +1,9 @@
 @inherits LayoutComponentBase
+@using BlazorLIMS.Data
+@using Microsoft.EntityFrameworkCore;
+@using System;
+
+@inject NavigationManager navManager;
 
 <div class="page">
     <div class="sidebar">
@@ -7,6 +12,27 @@
 
     <div class="main">
         <div class="top-row px-4">
+
+            @if (Info.CurrentUser.UserRole == Role.GUEST)
+            {
+                <label for="username" style="margin: 0px 15px;">User name
+                <input type="text" name="username" @bind="loginUsername">
+                </label>
+
+                <label for="pword" style="margin: 0px 15px;">Password
+                <input type="password" name="pword" @bind="loginPassword">
+                </label>
+
+                <button style="margin: 0px 15px;" @onclick="Login">Log in</button>
+            }
+
+            else
+            {
+                <div>Logged in as @Info.CurrentUser.Username</div>
+
+                <button style="margin: 0px 15px;" @onclick="Logout">Log out</button>
+            }
+
         </div>
 
         <div class="content px-4">
@@ -14,3 +40,69 @@
         </div>
     </div>
 </div>
+
+@code {
+
+    private string log;
+
+    private string loginUsername;
+    private string loginPassword;
+
+    private async void Login() {
+
+        if (String.IsNullOrEmpty(loginUsername) || String.IsNullOrEmpty(loginPassword))
+        {
+            return;
+        }
+
+        Console.WriteLine($"Attempting login with user {loginUsername}");
+
+        using (var context = new PWSMDbContext())
+        {
+            var users = await context.UserModels.ToListAsync();
+
+            foreach (var user in users)
+            {
+                if (user.Username.Equals(loginUsername) &&
+                    user.Password.Equals(loginPassword))
+                {
+                    Info.CurrentUser.UserModelId = user.UserModelId;
+                    Info.CurrentUser.Username = user.Username;
+                    Info.CurrentUser.UserRole = user.UserRole;
+                }
+            }
+        }
+
+        UpdateLog();
+        navManager.NavigateTo(navManager.Uri, true);
+
+    }
+
+    private void Logout() {
+
+        Console.WriteLine("Logging out.");
+
+        Info.CurrentUser.UserModelId = -1;
+        Info.CurrentUser.Password = "";
+        Info.CurrentUser.Username = "defaultGuest";
+        Info.CurrentUser.UserRole = Role.GUEST;
+
+        UpdateLog();
+        navManager.NavigateTo("", true);
+    }
+
+    protected override void OnInitialized() {
+
+        Info.CheckUser();
+
+        UpdateLog();
+        
+    }
+
+    private void UpdateLog() {
+
+        log = $"Currently viewing as {Info.CurrentUser.UserRole.ToString()}";
+        loginUsername = "";
+        loginPassword = "";
+    }
+}

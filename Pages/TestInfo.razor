@@ -16,6 +16,9 @@
 }
 </style>
 
+@if (Info.CurrentUser.UserRole == Role.ADMIN)
+{
+
 <table class="table">
     <thead>
         <tr>
@@ -86,6 +89,12 @@
     </tbody>
 
 </table>
+}
+
+else
+{
+    <h4>You don't have permission to view this page.</h4>
+}
 
 @code {
 

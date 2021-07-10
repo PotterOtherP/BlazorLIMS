@@ -1,0 +1,173 @@
+@page "/UserCreate"
+
+@using Microsoft.EntityFrameworkCore;
+@using BlazorLIMS.Data;
+@using System;
+
+@if (Info.CurrentUser.UserRole == Role.ADMIN)
+{
+
+<div style="display: flex; flex-direction: column; width: 20%;">
+
+    <div style="display: flex; justify-content: space-between; margin-bottom: 20px;">
+    <label for="username">Username:</label>
+    <input type="text" name="username" @bind="CreateUserName">
+    </div>
+
+    <div style="display: flex; justify-content: space-between; margin-bottom: 20px;">
+    <label for="password">Password:</label>
+    <input type="text" name="password" @bind="CreateUserPassword">
+    </div>
+
+    <div style="display: flex; justify-content: space-between; margin-bottom: 20px;">
+    <label for="password">Role:</label>
+    <select @bind="CreateUserRoleString">
+        <option value="Guest">Guest</option>
+        <option value="User">User</option>
+        <option value="Admin">Admin</option>
+    </select>
+    
+    </div>
+
+
+
+    <button style="margin-bottom: 20px;" @onclick="CreateUser">Create New User</button>
+
+    <div style="display: flex; justify-content: space-between; margin-bottom: 20px;">
+    <button @onclick="DeleteUser">Delete User</button>
+
+    <select @bind="DeleteID">
+        @foreach (var user in Users)
+        {
+            <option value=@user.UserModelId>@user.UserModelId</option>
+        }
+    </select>
+    </div>
+
+
+</div>
+
+<table class="table" style="width: 50%; margin-top: 30px;">
+    <thead>
+        <th>Role</th>
+        <th>Name</th>
+        <th>Password</th>
+        <th>Database ID</th>
+    </thead>
+
+    @foreach (var user in Users)
+    {
+        <tr>
+            <th>@user.UserRole.ToString()</th>
+            <th>@user.Username</th>
+            <th>@user.Password</th>
+            <th>@user.UserModelId</th>
+        </tr>
+    }
+</table>
+
+}
+
+else
+{
+    <h4>You don't have permission to view this page.</h4>
+}
+
+
+@code {
+
+    private List<UserModel> Users;
+
+    private string CreateUserName;
+    private string CreateUserPassword;
+    private string CreateUserRoleString = "User";
+    private Role CreateUserRole = Role.GUEST;
+
+    private int DeleteID;
+
+
+    private async void CreateUser() {
+
+        if (String.IsNullOrEmpty(CreateUserName) || String.IsNullOrEmpty(CreateUserPassword))
+        {
+            Console.WriteLine("Fields cannot be empty.");
+            return;
+        }
+
+        // No duplicates
+        foreach (var existingUser in Users)
+        {
+            if (CreateUserName.Equals(existingUser.Username) ||
+                CreateUserPassword.Equals(existingUser.Password))
+            {
+                Console.WriteLine("User name and/or password already taken.");
+                return;
+            }
+        }
+
+        if (CreateUserRoleString.Equals("Guest"))
+            CreateUserRole = Role.GUEST;
+        else if (CreateUserRoleString.Equals("User"))
+            CreateUserRole = Role.USER;
+        else if (CreateUserRoleString.Equals("Admin"))
+            CreateUserRole = Role.ADMIN;
+
+        using (var context = new PWSMDbContext())
+        {
+            UserModel newUser = new UserModel();
+            newUser.Username = CreateUserName;
+            newUser.Password = CreateUserPassword;
+            newUser.UserRole = CreateUserRole;
+
+            try {
+                context.UserModels.Add(newUser);
+            }
+            catch (Exception ex) {
+                Console.WriteLine(ex.Message);
+            }
+
+            await context.SaveChangesAsync();
+
+            Users = await context.UserModels.ToListAsync();
+        }
+
+    }
+
+    private async void DeleteUser() {
+
+        if (Users.Count <= 1)
+        {
+            Console.WriteLine("There must be at least one user.");
+            return;
+        }
+
+        using (var context = new PWSMDbContext())
+        {
+            try {
+                var userToDelete = await context.UserModels.FindAsync(DeleteID);
+                context.UserModels.Remove(userToDelete);
+            }
+            catch (Exception ex) {
+                Console.WriteLine(ex.Message);
+            }
+
+            await context.SaveChangesAsync();
+            Users = await context.UserModels.ToListAsync();
+        }
+    }
+
+    protected override async Task OnInitializedAsync() {
+
+        Info.CheckUser();
+
+        using (var context = new PWSMDbContext())
+        {
+            Users = await context.UserModels.ToListAsync();
+            if (Users.Count > 0)
+            {
+                DeleteID = Users[0].UserModelId;
+            }
+        }
+    }
+
+}

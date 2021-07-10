@@ -7,7 +7,8 @@
 
 @inject IJSRuntime JSRuntime;
 
-
+@if (Info.CurrentUser.UserRole == Role.ADMIN)
+{
 <select value=@CreateSampleType style="margin: 20px"
     @onchange="(ui) => SetSampleType(ui.Value.ToString())" >
     <option value="Plant">Plant</option>
@@ -68,6 +69,12 @@
         }
     </tbody>
 </table>
+}
+
+else
+{
+    <h4>You don't have permission to view this page.</h4>
+}
 
 
 @code {
