@@ -22,7 +22,7 @@
 <table class="table">
     <thead>
         <tr>
-            <th>Total rows: @TestDatas.Count</th>
+            @* <th>Total rows: @TestDatas.Count</th> *@
             @* <th><button @onclick="PrintInfoToConsole">Info</button></th> *@
             @* <th><button @onclick="DeleteAllRows">Delete Everything</button></th> *@
             @* <th><button @onclick="CreateEverything">Create Everything</button></th> *@
@@ -93,7 +93,7 @@
 
 else
 {
-    <h4>You don't have permission to view this page.</h4>
+    <h4>You must be logged in as an admin to view this page.</h4>
 }
 
 @code {

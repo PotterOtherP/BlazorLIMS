@@ -70,7 +70,7 @@
 
 else
 {
-    <h4>You don't have permission to view this page.</h4>
+    <h4>You must be logged in as an admin to view this page.</h4>
 }
 
 
@@ -145,6 +145,11 @@ else
         {
             try {
                 var userToDelete = await context.UserModels.FindAsync(DeleteID);
+                if (userToDelete.Username.ToLower().Equals("nate"))
+                {
+                    throw new ArgumentException("This user may not be removed.");
+                }
+
                 context.UserModels.Remove(userToDelete);
             }
             catch (Exception ex) {

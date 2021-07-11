@@ -5,6 +5,8 @@
 @using BlazorLIMS.Components;
 @using System;
 
+@if (Info.CurrentUser.UserRole == Role.USER || Info.CurrentUser.UserRole == Role.ADMIN)
+{
 <button @onclick="ReadRandomData">Read Data</button>
 
 <table class="table">
@@ -42,6 +44,12 @@
 
 </table>
 
+}
+
+else
+{
+    <h4>You must be logged in as a user to view this page.</h4>
+}
 
 @code {
 

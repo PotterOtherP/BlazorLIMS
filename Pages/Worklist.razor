@@ -5,12 +5,24 @@
 @using BlazorLIMS.Components;
 @using System;
 
+@if (Info.CurrentUser.UserRole == Role.USER || Info.CurrentUser.UserRole == Role.ADMIN)
+{
+<div style="display: flex; flex-direction: row; justify-content: space-between;">
 <select @bind="DisplayType" style="margin: 25px;">
     <option value="Plant">Plant</option>
     <option value="Waste">Waste</option>
     <option value="Solution">Solution</option>
     <option value="Media">Media</option>
 </select>
+
+<div style="display: flex; flex-direction: row;">
+    <h5 style="margin-right: 10px;">Plant (@TotalPlantSamples)</h5>
+    <h5 style="margin-right: 10px;">Waste (@TotalWasteSamples)</h5>
+    <h5 style="margin-right: 10px;">Solution (@TotalSolutionSamples)</h5>
+    <h5>Media (@TotalMediaSamples)</h5>
+</div>
+
+</div>
 
 <table class="table">
     <thead>
@@ -45,13 +57,28 @@
 
 </table>
 
-<button @onclick="DeleteAllReports" style="margin: 30px;">Delete All Reports</button>
+@if (Info.CurrentUser.UserRole == Role.ADMIN)
+{
+    <button @onclick="DeleteAllReports" style="margin: 30px;">Delete All Reports</button>
+}
+
+}
+
+else
+{
+    <h4>You must be logged in as a user to view this page.</h4>
+}
 
 @code {
 
     private List<ReportModel> savedReports;
 
-    private string DisplayType = "Plant"; 
+    private string DisplayType = "Plant";
+
+    private int TotalPlantSamples; 
+    private int TotalWasteSamples; 
+    private int TotalSolutionSamples; 
+    private int TotalMediaSamples; 
 
     private async void DeleteAllReports() {
 
@@ -82,11 +109,28 @@
 
         Info.CheckUser();
 
+        TotalPlantSamples = 0;
+        TotalWasteSamples = 0;
+        TotalSolutionSamples = 0;
+        TotalMediaSamples = 0;
+
         using (var context = new PWSMDbContext())
         {
             savedReports = await context.ReportModels
             .Include("Samples.AssignedTests")
             .ToListAsync();
+        }
+
+        foreach (var report in savedReports)
+        {
+            if (report.SampleType.Equals("Plant"))
+                TotalPlantSamples += report.Samples.Count;
+            else if (report.SampleType.Equals("Waste"))
+                TotalWasteSamples += report.Samples.Count;
+            else if (report.SampleType.Equals("Solution"))
+                TotalSolutionSamples += report.Samples.Count;
+            else if (report.SampleType.Equals("Media"))
+                TotalMediaSamples += report.Samples.Count;
 
         }
     }

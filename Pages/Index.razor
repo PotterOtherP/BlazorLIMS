@@ -18,7 +18,11 @@
         <thead>
             <th><h5>@Report.LabReportIdFull</h5></th>
             <th><h5>@Report.ReportType</h5></th>
-            <th><button @onclick="SaveReportToDatabase">Save Report</button></th>
+            @if (Info.CurrentUser.UserRole == Role.USER ||
+                 Info.CurrentUser.UserRole == Role.ADMIN)
+            {
+                <th><button @onclick="SaveReportToDatabase">Save Report</button></th>
+            }
         </thead>
         <thead>
             <th>ID</th>
