@@ -1,0 +1,69 @@
+@page "/Report/{DatabaseId:int}"
+
+@using BlazorLIMS.Data;
+@using Microsoft.EntityFrameworkCore;
+@using System;
+
+@if (report != null &&
+    (report.Status == ReportStatus.FINALIZE || report.Status == ReportStatus.COMPLETE))
+{
+    <h4>@report.LabReportIdFull</h4>
+    <p>First Name: <input type="text" @bind="@report.CustomerFirstName"></p>
+    <p>Last Name: <input type="text" @bind="@report.CustomerLastName"></p>
+    <p>Address: <input type="address" @bind="@report.CustomerAddress"></p>
+    <p>County:
+    <select @bind="@report.CustomerCounty">
+        @foreach (var county in Info.Counties)
+        {
+            <option value=@county>@county</option>
+        }
+    </select>
+    </p>
+}
+
+else
+{
+    <h4>That report does not exist or cannot be finalized yet.</h4>
+    <a href="/Worklist">Back to Worklist</a>
+}
+
+
+@code {
+
+    [Parameter]
+    public int DatabaseId { get; set; }
+
+    private ReportModel report;
+
+
+    protected override async Task OnInitializedAsync() {
+
+        using (var context = new PWSMDbContext())
+        {
+            try {
+
+                report = await context.ReportModels.SingleAsync(r => r.ReportModelId == DatabaseId);
+
+                await context.Entry(report).Collection(r => r.Samples).LoadAsync();
+
+                foreach (var sample in report.Samples)
+                {
+                    await context.Entry(sample).Collection(s => s.AssignedTests).LoadAsync();
+                }
+
+
+                if (report != null
+                    && report.Status == ReportStatus.ENTRY
+                    && report.EntryComplete())
+                {
+                    report.Status = ReportStatus.FINALIZE;
+                    await context.SaveChangesAsync();
+                }
+            }
+            catch (Exception ex) {
+                Console.WriteLine(ex.Message);
+            }
+        }
+
+    }
+}

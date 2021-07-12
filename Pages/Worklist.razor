@@ -33,14 +33,16 @@
 
     @foreach (var report in savedReports)
     {
-        @if (report.SampleType.Equals(DisplayType))
+        @if (report.SampleType.Equals(DisplayType) && report.Status == ReportStatus.ENTRY)
         {
             
             <tr>
                 <th>@report.LabReportIdFull - @report.ReportType</th>
-                @if (report.IsComplete())
+                @if (report.EntryComplete())
                 {
-                    <th style="color: green;">Finalize</th>
+                    var uri = $"/Report/{@report.ReportModelId}";
+                    <th style="color: green;">
+                        <a href=@uri>Finalize</a></th>
                 }
                 else{
                     <th style="color: red;">Incomplete</th>

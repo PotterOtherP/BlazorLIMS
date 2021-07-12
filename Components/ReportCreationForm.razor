@@ -98,6 +98,7 @@
         CreatedReport.LabReportIdFull = $"R{CreateSampleType.Substring(0,1)}{NextReportNumber}";
         CreatedReport.ReportType = CreateReportType;
         CreatedReport.DateReceived = CreateReportDate;
+        CreatedReport.Status = ReportStatus.ENTRY;
         CreatedReport.Samples = new List<SampleModel>();
 
         for (int i = 0; i < CreateNumberOfSamples; ++i)

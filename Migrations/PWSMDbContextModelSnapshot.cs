@@ -22,11 +22,23 @@ namespace BlazorLIMS.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<DateTime>("DateReceived")
+                    b.Property<string>("AgronomistComment")
                         .HasColumnType("TEXT");
 
-                    b.Property<bool>("Deleted")
-                        .HasColumnType("INTEGER");
+                    b.Property<string>("CustomerAddress")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("CustomerCounty")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("CustomerFirstName")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("CustomerLastName")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("DateReceived")
+                        .HasColumnType("TEXT");
 
                     b.Property<int>("LabReportId")
                         .HasColumnType("INTEGER");
@@ -39,6 +51,9 @@ namespace BlazorLIMS.Migrations
 
                     b.Property<string>("SampleType")
                         .HasColumnType("TEXT");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("ReportModelId");
 

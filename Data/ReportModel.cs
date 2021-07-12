@@ -4,6 +4,14 @@ using System.ComponentModel.DataAnnotations;
 
 namespace BlazorLIMS.Data {
 
+    public enum ReportStatus {
+
+        ENTRY,
+        FINALIZE,
+        COMPLETE,
+        DELETED
+    }
+
     public class ReportModel {
 
         [Key]
@@ -17,14 +25,21 @@ namespace BlazorLIMS.Data {
 
         public string ReportType { get; set; }
 
-        public bool Deleted { get; set; }
-
         public DateTime DateReceived { get; set; }
+
+        public ReportStatus Status { get; set; }
+
+        public string CustomerFirstName { get; set; }
+        public string CustomerLastName { get; set; }
+        public string CustomerAddress { get; set; }
+        public string CustomerCounty { get; set; }
+
+        public string AgronomistComment { get; set; }
 
         // Navigation property
         public List<SampleModel> Samples { get; set; }
 
-        public bool IsComplete() {
+        public bool EntryComplete() {
 
             foreach (var sample in Samples)
             {

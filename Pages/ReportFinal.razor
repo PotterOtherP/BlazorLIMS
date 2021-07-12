@@ -1,0 +1,42 @@
+@page "/ReportFinal"
+
+@using BlazorLIMS.Data;
+@using Microsoft.EntityFrameworkCore;
+@using System;
+
+@if (FinalReports != null && FinalReports.Count > 0)
+{
+    @foreach (var report in FinalReports)
+    {
+        var uri = $"/Report/{@report.ReportModelId}";
+        <p><a href=@uri>@report.LabReportIdFull</a></p>
+    }
+}
+
+else
+{
+    <h5>Nothing to see here.</h5>
+}
+
+
+@code {
+
+    private List<ReportModel> FinalReports;
+
+    protected override async Task OnInitializedAsync() {
+
+        using (var context = new PWSMDbContext())
+        {
+            try {
+                FinalReports = await context.ReportModels
+                .Where(r => (r.Status == ReportStatus.FINALIZE || 
+                r.Status == ReportStatus.COMPLETE)).ToListAsync();
+            }
+            catch (Exception ex) {
+                Console.WriteLine(ex.Message);
+            }
+        }
+    }
+    
+
+}
