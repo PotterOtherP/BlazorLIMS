@@ -33,7 +33,7 @@
 
     @foreach (var report in savedReports)
     {
-        @if (report.SampleType.Equals(DisplayType) && report.Status == ReportStatus.ENTRY)
+        @if (report.SampleType.Equals(DisplayType))
         {
             
             <tr>
@@ -119,6 +119,7 @@ else
         using (var context = new PWSMDbContext())
         {
             savedReports = await context.ReportModels
+            .Where(r => r.Status == ReportStatus.ENTRY)
             .Include("Samples.AssignedTests")
             .ToListAsync();
         }

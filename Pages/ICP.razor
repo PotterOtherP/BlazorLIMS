@@ -103,7 +103,20 @@ else
                         continue;
 
                     var rando = new Random();
-                    int result = rando.Next(50, 10000);
+                    double result = rando.Next(5, 1000) * 1.0;
+
+                    if (sample.SampleType.Equals("Plant"))
+                    {
+                        if (test.Name.Equals("Ca (ICP)") ||
+                            test.Name.Equals("K (ICP)")  ||
+                            test.Name.Equals("Mg (ICP)") ||
+                            test.Name.Equals("P (ICP)" ) ||
+                            test.Name.Equals("S (ICP)"))
+                            {
+                                result = rando.NextDouble() * 5.0;
+                                result = ((int)(result * 100)) / 100.0;
+                            }
+                    }
 
                     test.MeasuredValue = result;
 

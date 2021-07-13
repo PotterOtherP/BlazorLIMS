@@ -4,18 +4,34 @@
 @using Microsoft.EntityFrameworkCore;
 @using System;
 
+@if (Info.CurrentUser.UserRole == Role.USER || Info.CurrentUser.UserRole == Role.ADMIN)
+{
+
 @if (FinalReports != null && FinalReports.Count > 0)
 {
     @foreach (var report in FinalReports)
     {
         var uri = $"/Report/{@report.ReportModelId}";
-        <p><a href=@uri>@report.LabReportIdFull</a></p>
+        <p>
+            <a href=@uri>@report.LabReportIdFull</a>
+            @if (@report.Status == ReportStatus.COMPLETE)
+            {
+                <button style="margin-left: 20px;">Get PDF</button>
+            }
+        </p>
     }
 }
 
 else
 {
     <h5>Nothing to see here.</h5>
+}
+
+}
+
+else
+{
+    <h4>You must be logged in as a user to view this page.</h4>
 }
 
 

@@ -19,6 +19,8 @@
 @if (Info.CurrentUser.UserRole == Role.ADMIN)
 {
 
+<button @onclick="CreateDummyData">Create Dummy Data</button>
+
 <table class="table">
     <thead>
         <tr>
@@ -101,6 +103,65 @@ else
     private IList<TestDataModel> TestDatas;
 
     private string CurrentDisplaySampleCode = "";
+
+    private async void CreateDummyData() {
+
+        var rando = new Random();
+
+        using (var context = new PWSMDbContext())
+        {
+            try {
+
+                TestDatas = await context.TestDataTable.ToListAsync();
+
+                foreach (var row in TestDatas)
+                {
+                    if (row.Units.Equals("ppm"))
+                    {
+                        row.LowValue = rando.Next(30, 300) * 1.0;
+                        row.HighValue = rando.Next(600, 1100) * 1.0;
+                    }
+
+                    else if (row.Units.Equals("pct"))
+                    {
+                        row.LowValue = rando.Next(2, 5) * 1.0;
+                        row.HighValue = rando.Next(9, 15) * 1.0;
+                    }
+
+                    else if (row.TestName.Equals("pH"))
+                    {
+                        row.LowValue = 7.0;
+                        row.HighValue = 8.0;
+                    }
+
+                    else if (row.TestName.Equals("EC"))
+                    {
+                        row.LowValue = 0.1;
+                        row.HighValue = 3.0;
+
+                        if (Array.IndexOf(Info.WasteCodesArray, row.SampleCode) >= 0)
+                        {
+                            row.LowValue = 1.0;
+                            row.HighValue = 30.0;
+                        }
+                    }
+
+                    if (row.TestName.Equals("DM"))
+                    {
+                        row.LowValue = 0.0;
+                        row.HighValue = 100.0;
+                    }
+                }
+
+            }
+            catch (Exception ex) {
+                Console.WriteLine(ex.Message);
+            }
+
+            await context.SaveChangesAsync();
+        }
+
+    }
 
     protected override async Task OnInitializedAsync() {
 

@@ -4,13 +4,17 @@
 @using Microsoft.EntityFrameworkCore;
 @using System;
 
+@if (Info.CurrentUser.UserRole == Role.USER || Info.CurrentUser.UserRole == Role.ADMIN)
+{
+
+
 @if (report != null &&
     (report.Status == ReportStatus.FINALIZE || report.Status == ReportStatus.COMPLETE))
 {
     <h4>@report.LabReportIdFull</h4>
-    <p>First Name: <input type="text" @bind="@report.CustomerFirstName"></p>
-    <p>Last Name: <input type="text" @bind="@report.CustomerLastName"></p>
-    <p>Address: <input type="address" @bind="@report.CustomerAddress"></p>
+    <p>Customer First Name: <input type="text" @bind="@report.CustomerFirstName"></p>
+    <p>Customer Last Name: <input type="text" @bind="@report.CustomerLastName"></p>
+    <p>Customer Address: <input type="address" @bind="@report.CustomerAddress"></p>
     <p>County:
     <select @bind="@report.CustomerCounty">
         @foreach (var county in Info.Counties)
@@ -19,6 +23,73 @@
         }
     </select>
     </p>
+    <p>Agronomist's Comments: <input type="text" @bind="@report.AgronomistComment"></p>
+    <button @onclick="CompleteReport">Finish Report</button>
+
+    @foreach (var sample in @report.Samples)
+    {
+        <table class="table">
+            <thead>
+                <th>@sample.LabIdFull</th>
+                <th>@sample.SampleCode</th>
+                <tr>
+                    @foreach (var test in @sample.AssignedTests)
+                    {
+                        string str = @test.Name;
+                        if (str.Contains("ICP") || str.Contains("HM"))
+                        {
+                            str = str.Split(" ")[0];
+                        }
+                        <th>@str</th>
+                        <th>@test.MeasuredValue</th>
+                    }
+                </tr>
+                <tr>
+                    @foreach (var test in @sample.AssignedTests)
+                    {
+                        string str = @test.Name;
+                        if (str.Contains("ICP") || str.Contains("HM"))
+                        {
+                            str = str.Split(" ")[0];
+                        }
+                        double? result = @test.Percentile();
+                        result = ((int)(result * 100)) / 100.0;
+                        <th>@str</th>
+
+                        if (result <= 25.0)
+                        {
+                            <th style="color: blue; ">@result - D</th>
+                        }
+
+                        else if (result <= 50.0)
+                        {
+                            <th style="color: green; ">@result - L</th>
+                        }
+
+                        else if (result <= 75.0)
+                        {
+                            <th style="color: green; ">@result - S</th>
+                        }
+
+                        else if (result <= 100.0)
+                        {
+                            <th style="color: green; ">@result - H</th>
+                        }
+
+                        else if (result > 100.0)
+                        {
+                            <th style="color: red; ">@result - E</th>
+                        }
+
+                        else
+                        {
+                            <th>@result</th>
+                        }
+                    }
+                </tr>
+            </thead>
+        </table>
+    }
 }
 
 else
@@ -27,6 +98,12 @@ else
     <a href="/Worklist">Back to Worklist</a>
 }
 
+}
+
+else
+{
+    <h4>You must be logged in as a user to view this page.</h4>
+}
 
 @code {
 
@@ -34,6 +111,33 @@ else
     public int DatabaseId { get; set; }
 
     private ReportModel report;
+
+
+    private async void CompleteReport() {
+
+        using (var context = new PWSMDbContext())
+        {
+            try {
+
+            var reportToUpdate = await context.ReportModels.FindAsync(report.ReportModelId);
+
+            reportToUpdate.CustomerFirstName = report.CustomerFirstName;
+            reportToUpdate.CustomerLastName = report.CustomerLastName;
+            reportToUpdate.CustomerAddress = report.CustomerAddress;
+            reportToUpdate.CustomerCounty = report.CustomerCounty;
+            reportToUpdate.AgronomistComment = report.AgronomistComment;
+            reportToUpdate.Status = ReportStatus.COMPLETE;
+
+            await context.SaveChangesAsync();
+            
+            }
+
+            catch (Exception ex) {
+                Console.WriteLine(ex.Message);
+            }
+        }
+
+    }
 
 
     protected override async Task OnInitializedAsync() {

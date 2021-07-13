@@ -78,10 +78,18 @@
             return;
         }
 
-        Console.WriteLine($"Saving report... {Report.LabReportIdFull} {Report.SampleType}, {Report.ReportType}");
 
         using (var context = new PWSMDbContext())
         {
+            int totalReportsInDatabase = context.ReportModels.Count();
+
+            if (totalReportsInDatabase > 25)
+            {
+                Console.WriteLine("Database is full.");
+                return;
+            }
+
+            Console.WriteLine($"Saving report... {Report.LabReportIdFull} {Report.SampleType}, {Report.ReportType}");
 
             foreach (SampleModel sample in Report.Samples)
             {
