@@ -25,7 +25,22 @@ namespace BlazorLIMS.Data {
                 throw new DivideByZeroException("High value and low value cannot be the same.");
             }
 
-            return (MeasuredValue - LowValue) * 100.0 / (HighValue - LowValue);
+            double? result = 0.0;
+
+            if (MeasuredValue >= LowValue )
+            {
+                result = ((MeasuredValue - LowValue) * 75.0 / (HighValue - LowValue)) + 25.0;
+            }
+
+            if (MeasuredValue < LowValue)
+            {
+                result = 25.0 * MeasuredValue / LowValue;
+            }
+
+            if (result > 124.0)
+                result = 124.0;
+
+            return result;
         }
 
     }
