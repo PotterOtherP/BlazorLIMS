@@ -1,10 +1,17 @@
 using Microsoft.EntityFrameworkCore;
 using BlazorLIMS.Data;
-using System;
+using System.Configuration;
+using Microsoft.Extensions.Configuration;
 
 namespace BlazorLIMS {
 
+    public static class MyAppData {
+
+        public static IConfiguration Configuration;
+    }
+
     public class PWSMDbContext : DbContext {
+
 
         public PWSMDbContext() {
 
@@ -28,7 +35,9 @@ namespace BlazorLIMS {
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlite("Data Source=PWSMDatabase.db");
+            // optionsBuilder.UseSqlite("Data Source=PWSMDatabase.db");
+            string str = MyAppData.Configuration.GetConnectionString("SQLCONNSTR_nstsqldb_connstr");
+            optionsBuilder.UseSqlServer(str);
         }
     }
 }

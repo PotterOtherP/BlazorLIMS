@@ -1,33 +1,20 @@
-@page "/Report/{DatabaseId:int}"
+@page "/ReportPrint/{DatabaseId:int}"
+@layout NoLayout
 
 @using BlazorLIMS.Data;
 @using Microsoft.EntityFrameworkCore;
 @using System;
 
-
-@if (Info.CurrentUser.UserRole == Role.USER || Info.CurrentUser.UserRole == Role.ADMIN)
+@if (report != null && report.Status == ReportStatus.COMPLETE)
 {
-
-
-@if (report != null &&
-    (report.Status == ReportStatus.FINALIZE || report.Status == ReportStatus.COMPLETE))
-{
-    string st = (report.Status == ReportStatus.COMPLETE) ? 
-        $"{@report.LabReportIdFull} (Complete)" : $"{@report.LabReportIdFull}";
-    <h4>@st</h4>
-    <p>Customer First Name: <input type="text" @bind="@report.CustomerFirstName"></p>
-    <p>Customer Last Name: <input type="text" @bind="@report.CustomerLastName"></p>
-    <p>Customer Address: <input type="address" @bind="@report.CustomerAddress"></p>
-    <p>County:
-    <select @bind="@report.CustomerCounty">
-        @foreach (var county in Info.Counties)
-        {
-            <option value=@county>@county</option>
-        }
-    </select>
-    </p>
-    <p>Agronomist's Comments: <input type="text" @bind="@report.AgronomistComment"></p>
-    <button @onclick="CompleteReport">Finish Report</button>
+    string fullName = $"{@report.CustomerLastName}, {@report.CustomerFirstName}";
+    string dateString = $"{@report.DateReceived.Month}/{@report.DateReceived.Day}/{@report.DateReceived.Year}";
+    <h4>@report.LabReportIdFull - @report.ReportType</h4>
+    <p>@dateString</p>
+    <p>@fullName</p>
+    <p>@report.CustomerAddress</p>
+    <p>@report.CustomerCounty County</p>
+    <p>Agronomist's Comments: @report.AgronomistComment</p>
 
     @foreach (var sample in @report.Samples)
     {
@@ -107,16 +94,9 @@
 
 else
 {
-    <h4>That report does not exist or cannot be finalized yet.</h4>
-    <a href="/Worklist">Back to Worklist</a>
+    <h4>That report does not exist.</h4>
 }
 
-}
-
-else
-{
-    <h4>You must be logged in as a user to view this page.</h4>
-}
 
 @code {
 

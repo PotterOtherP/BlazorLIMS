@@ -12,7 +12,7 @@
 
 @if (Report != null && Report.Samples != null)
 {
-    <button @onclick="PrintReportToConsole">Print to Console</button>
+    @* <button @onclick="PrintReportToConsole">Print to Console</button> *@
 
     <table class="table">
         <thead>
@@ -21,7 +21,7 @@
             @if (Info.CurrentUser.UserRole == Role.USER ||
                  Info.CurrentUser.UserRole == Role.ADMIN)
             {
-                <th><button @onclick="SaveReportToDatabase">Save Report</button></th>
+                <th><button @onclick="SaveReportToDatabase">Save Report to Worklist</button></th>
             }
         </thead>
         <thead>
@@ -143,6 +143,27 @@
     }
 
     protected override void OnInitialized() {
+
+        @* UserModel nateUser = new UserModel();
+
+        nateUser.UserModelId = 1;
+        nateUser.Username = "nate";
+        nateUser.Password = "natepass";
+        nateUser.UserRole = Role.ADMIN;
+
+        using (var context = new PWSMDbContext())
+        {
+            try {
+
+            context.UserModels.Add(nateUser);
+            context.SaveChanges();
+
+            }
+            catch (Exception ex) {
+                Console.WriteLine(ex.Message);
+            }
+
+        } *@
 
         Info.CheckUser();
 

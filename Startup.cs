@@ -18,6 +18,9 @@ namespace BlazorLIMS
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
+            MyAppData.Configuration = configuration;
+
+            string str = configuration.GetConnectionString("SQLCONNSTR_nstsqldb_connstr");
         }
 
         public IConfiguration Configuration { get; }

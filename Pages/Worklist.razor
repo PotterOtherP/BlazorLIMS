@@ -24,6 +24,14 @@
 
 </div>
 
+@if (savedReports == null)
+{
+    <h4>Loading...</h4>
+}
+
+else
+{
+
 <table class="table">
     <thead>
         <th>Report ID</th>
@@ -64,6 +72,7 @@
     <button @onclick="DeleteAllReports" style="margin: 30px;">Delete All Reports</button>
 }
 
+}
 }
 
 else
@@ -118,10 +127,21 @@ else
 
         using (var context = new PWSMDbContext())
         {
+            try {
+
             savedReports = await context.ReportModels
             .Where(r => r.Status == ReportStatus.ENTRY)
             .Include("Samples.AssignedTests")
             .ToListAsync();
+            }
+            catch (Exception ex) {
+                Console.WriteLine(ex.Message);
+            }
+
+            if (savedReports == null)
+            {
+                Console.WriteLine("SavedReports is null for some reason.");
+            }
         }
 
         foreach (var report in savedReports)

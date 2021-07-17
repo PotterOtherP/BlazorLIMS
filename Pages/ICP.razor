@@ -7,6 +7,15 @@
 
 @if (Info.CurrentUser.UserRole == Role.USER || Info.CurrentUser.UserRole == Role.ADMIN)
 {
+
+@if (savedReports == null)
+{
+    <h4>Loading...</h4>
+}
+
+else
+{
+
 <button @onclick="ReadRandomData">Read Data</button>
 
 <table class="table">
@@ -43,6 +52,7 @@
     }
 
 </table>
+}
 
 }
 

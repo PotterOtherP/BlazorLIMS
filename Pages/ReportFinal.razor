@@ -12,11 +12,14 @@
     @foreach (var report in FinalReports)
     {
         var uri = $"/Report/{@report.ReportModelId}";
+        var uriPrint = $"/ReportPrint/{@report.ReportModelId}";
         <p>
             <a href=@uri>@report.LabReportIdFull</a>
             @if (@report.Status == ReportStatus.COMPLETE)
             {
-                <button style="margin-left: 20px;">Get PDF</button>
+                <a href=@uriPrint>
+                    <button style="margin-left: 20px;">Print Report</button>
+                </a>
             }
         </p>
     }
