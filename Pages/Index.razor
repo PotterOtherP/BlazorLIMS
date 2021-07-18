@@ -10,7 +10,7 @@
 
 @* <button>Clear Report Database</button> *@
 
-@if (Report != null && Report.Samples != null)
+@if (Report != null && Report.Samples != null && Report.Samples.Count > 0)
 {
     @* <button @onclick="PrintReportToConsole">Print to Console</button> *@
 
@@ -135,6 +135,8 @@
         
         Report.Samples.Clear();
         Report = new ReportModel();
+        Report.Samples = new List<SampleModel>();
+        Refresh();
     }
     
     private void Refresh() {

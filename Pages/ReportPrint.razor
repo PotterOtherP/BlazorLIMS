@@ -7,6 +7,8 @@
 
 @if (report != null && report.Status == ReportStatus.COMPLETE)
 {
+
+
     string fullName = $"{@report.CustomerLastName}, {@report.CustomerFirstName}";
     string dateString = $"{@report.DateReceived.Month}/{@report.DateReceived.Day}/{@report.DateReceived.Year}";
     <h4>@report.LabReportIdFull - @report.ReportType</h4>
@@ -21,7 +23,8 @@
         <table class="table" style="width: 80%;">
             <thead>
                 <th>@sample.LabIdFull</th>
-                <th>@sample.SampleCode</th>
+                <th colspan="5">@sample.SampleCode</th>
+            </thead>
                 <tr>
                     @foreach (var test in @sample.AssignedTests)
                     {
@@ -42,10 +45,10 @@
                         {
                             str = str.Split(" ")[0];
                         }
-                        double? result = @test.Percentile();
-                        result = ((int)(result * 100)) / 100.0;
-                        <th>@str</th>
+                        double? resultD = @test.Percentile();
+                        resultD = ((int)(resultD * 100)) / 100.0;
 
+                        int result = (int)(resultD);
                         if (@test.Name.Equals("Bulk Density") ||
                             @test.Name.Equals("pH") ||
                             @test.Name.Equals("EC") ||
@@ -53,41 +56,40 @@
                             @test.Name.Equals("DM") ||
                             @test.Name.Equals("Biomass"))
                         {
-                            <th>@result</th>
+                            <th colspan="2">@result</th>
                         }
 
-                        else if (result <= 25.0)
+                        else if (result <= 25)
                         {
-                            <th style="color: blue; ">@result - D</th>
+                            <th style="color: blue; " colspan="2">@result - D</th>
                         }
 
-                        else if (result <= 50.0)
+                        else if (result <= 50)
                         {
-                            <th style="color: green; ">@result - L</th>
+                            <th style="color: green; " colspan="2">@result - L</th>
                         }
 
-                        else if (result <= 75.0)
+                        else if (result <= 75)
                         {
-                            <th style="color: green; ">@result - S</th>
+                            <th style="color: green; " colspan="2">@result - S</th>
                         }
 
-                        else if (result <= 100.0)
+                        else if (result <= 100)
                         {
-                            <th style="color: green; ">@result - H</th>
+                            <th style="color: green; " colspan="2">@result - H</th>
                         }
 
-                        else if (result > 100.0)
+                        else if (result > 100)
                         {
-                            <th style="color: red; ">@result - E</th>
+                            <th style="color: red; " colspan="2">@result - E</th>
                         }
 
                         else
                         {
-                            <th>@result</th>
+                            <th colspan="2">@result</th>
                         }
                     }
                 </tr>
-            </thead>
         </table>
     }
 }

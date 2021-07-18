@@ -19,9 +19,9 @@ namespace BlazorLIMS.Data {
                 CurrentUser.UserModelId = -1;
                 CurrentUser.Password = "";
                 CurrentUser.Username = "defaultGuest";
-                // CurrentUser.UserRole = Role.GUEST;
+                CurrentUser.UserRole = Role.GUEST;
                 // CurrentUser.UserRole = Role.USER;
-                CurrentUser.UserRole = Role.ADMIN;
+                // CurrentUser.UserRole = Role.ADMIN;
             }
 
             else
@@ -226,7 +226,6 @@ namespace BlazorLIMS.Data {
         public static readonly string[] PlantTestMenu = {
 
             "ICP",
-            "Biomass",
             "C",
             "Cl",
             "DW",
@@ -240,7 +239,6 @@ namespace BlazorLIMS.Data {
         public static readonly string[] PlantTestMenuUnits = {
 
             "",
-            "g",
             "pct",
             "ppm",
             "g",

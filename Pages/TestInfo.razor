@@ -161,6 +161,8 @@ else
             await context.SaveChangesAsync();
         }
 
+        StateHasChanged();
+
     }
 
     protected override async Task OnInitializedAsync() {

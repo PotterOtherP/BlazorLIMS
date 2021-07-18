@@ -6,6 +6,8 @@
 
 <h1 style="margin: 20px">PWSM Lab Receiving</h1>
 
+<div style="display: flex; flex-direction: row">
+
 <select value="@CreateSampleType" style="margin: 20px"
    @onchange="(ui) => MenuChange(ui.Value.ToString())">
     <option value="Plant">Plant</option>
@@ -21,6 +23,12 @@
     <option value="Internal">Internal</option>
     <option value="OutOfState">Out of State</option>
 </select>
+
+<input @bind="CreateReportDate" type="date" style="margin: 20px; width: 35%">
+
+</div>
+
+<div style="display: flex; flex-direction: row">
 
 <select @bind="CreateSampleCode" style="margin: 20px">
     @{
@@ -60,7 +68,8 @@
 
 <input @bind="CreateNumberOfSamples" type="number" min="1" max="50" style="margin: 20px; width: 15%">
 
-<input @bind="CreateReportDate" type="date" style="margin: 20px; width: 35%">
+</div>
+
 
 <button @onclick="CreateReportFromForm" style="margin: 20px">Create Grid</button>
 
