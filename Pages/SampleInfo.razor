@@ -50,19 +50,27 @@
         }
         else
         {
+            int count = 0;
+
             foreach (var item in SampleCodes)
             {
+                    
                 if (item.Type.Equals(CreateSampleType) ||
                 (item.Type.Equals("Waste") && (CreateSampleType.Equals("WasteLiquid")
                                             || CreateSampleType.Equals("WasteSolid")))
                 )
                 {
+
+                    ++count;
+                    var color = (count % 2 == 0) ? "#cccccc" : "#eeeeee";
+
                     <SampleCodeRow
                     RowId=@item.Id
                     Name=@item.Name
                     Type=@item.Type
                     DefaultTests=@item.DefaultTestString
                     OnClickCallback="@SetTable"
+                    BGColor=@color
                     />
                 }
             }

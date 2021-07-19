@@ -36,7 +36,17 @@ input[type=number]::-webkit-inner-spin-button {
 }
 
 .test-edit-menu {
+    padding: 5px;
     display: grid; grid-template-columns: 1fr 1fr 1fr;
+    border: 1px solid black;
+    border-radius: 5px;
+    background-color: #fafafa;
+    margin-bottom: 10px;
+}
+
+.test-edit-individual {
+    display: flex;
+    flex-direction: flex-row;
 }
 
 #blazor-error-ui {

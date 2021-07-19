@@ -47,7 +47,7 @@
     <select @bind="DeleteID">
         @foreach (var user in Users)
         {
-            <option value=@user.UserModelId>@user.UserModelId</option>
+            <option value=@user.UserModelId >@user.UserModelId</option>
         }
     </select>
     </div>
@@ -65,7 +65,10 @@
 
     @foreach (var user in Users)
     {
-        <tr>
+        var color = "#cccccc";
+        if (Users.IndexOf(user) % 2 == 0)
+            color = "#eeeeee";
+        <tr style="background-color: @color;">
             <th>@user.UserRole.ToString()</th>
             <th>@user.Username</th>
             <th>@user.Password</th>

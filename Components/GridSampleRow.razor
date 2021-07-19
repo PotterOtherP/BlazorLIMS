@@ -3,7 +3,20 @@
 
 @inject IJSRuntime JSRuntime;
 
-<tr style="background-color: #aaeeaa; ">
+@{
+    var bgcolor = "#dddddd";
+
+    if (ColorIndex && @sample.SampleType.Equals("Plant"))
+        bgcolor = "#aaddaa";
+    else if (ColorIndex && @sample.SampleType.Equals("Waste"))
+        bgcolor = "#f4a460";
+    else if (ColorIndex && @sample.SampleType.Equals("Solution"))
+        bgcolor = "#aaaadd";
+    else if (ColorIndex && @sample.SampleType.Equals("Media"))
+        bgcolor = "#ddaaaa";
+}
+
+<tr style="background-color: @bgcolor; ">
     @{
         var letter = @sample.SampleType.Substring(0,1);
 
@@ -54,7 +67,7 @@
 
             var boxId = $"{@sample.LabId}{item}Box";
 
-            <div style="display: flex; flex-direction: flex-row;">
+            <div>
             <input type="checkbox" value=@item id=@boxId
             @onchange="TestChange"
             checked=@chk>
@@ -87,6 +100,9 @@
 
     [Parameter]
     public EventCallback Callback { get; set; }
+
+    [Parameter]
+    public bool ColorIndex { get; set; }
 
     private string[] testMenuArray;
     private bool testEditVisible = false;

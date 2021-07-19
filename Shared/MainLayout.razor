@@ -19,7 +19,7 @@
                 <input type="text" name="username" @bind="loginUsername">
                 </label>
 
-                <label for="pword" style="margin: 0px 15px;">Password
+                <label for="pword" style="margin: 0px 15px;" @onkeypress="LogInKey">Password
                 <input type="password" name="pword" @bind="loginPassword">
                 </label>
 
@@ -52,6 +52,7 @@
 
         if (String.IsNullOrEmpty(loginUsername) || String.IsNullOrEmpty(loginPassword))
         {
+            Console.WriteLine("Empty string detected.");
             return;
         }
 
@@ -76,6 +77,18 @@
         UpdateLog();
         navManager.NavigateTo(navManager.Uri, true);
 
+    }
+
+    private void LogInKey(KeyboardEventArgs kArgs) {
+
+        var x = kArgs.Code;
+
+        Console.WriteLine($"Key Pressed: {x}");
+        if (x.Equals("Enter"))
+        {
+            Console.WriteLine("Enter pressed.");
+            Login();
+        }
     }
 
     private void Logout() {

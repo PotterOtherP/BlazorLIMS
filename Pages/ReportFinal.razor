@@ -13,13 +13,17 @@
     {
         var uri = $"/Report/{@report.ReportModelId}";
         var uriPrint = $"/ReportPrint/{@report.ReportModelId}";
-        <p>
+        <p style="display: flex; flex-direction: row; ">
+            <div style="width: 100px;">
             <a href=@uri>@report.LabReportIdFull</a>
+            </div>
             @if (@report.Status == ReportStatus.COMPLETE)
             {
+                <div style="width: 200px;">
                 <a href=@uriPrint>
                     <button style="margin-left: 20px;">Print Report</button>
                 </a>
+                </div>
             }
         </p>
     }

@@ -11,29 +11,39 @@
     <ul class="nav flex-column">
         <li class="nav-item px-3">
             <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="oi oi-home" aria-hidden="true"></span> Home
+                <span class="oi oi-home" aria-hidden="true"></span> New Report
+            </NavLink>
+        </li>
+        <li class="nav-item px-3">
+            <NavLink class="nav-link" href="About" Match="NavLinkMatch.All">
+                <span class="oi oi-info" aria-hidden="true"></span> About
+            </NavLink>
+        </li>
+        <li class="nav-item px-3">
+            <NavLink class="nav-link" href="Glossary" Match="NavLinkMatch.All">
+                <span class="oi oi-info" aria-hidden="true"></span> Test Glossary
             </NavLink>
         </li>
         @if (Info.CurrentUser.UserRole == Role.ADMIN || Info.CurrentUser.UserRole == Role.USER)
         {
         <li class="nav-item px-3">
             <NavLink class="nav-link" href="Worklist" Match="NavLinkMatch.All">
-                <span class="oi oi-info" aria-hidden="true"></span> Worklist
+                <span class="oi oi-list" aria-hidden="true"></span> Worklist
             </NavLink>
         </li>
         <li class="nav-item px-3">
             <NavLink class="nav-link" href="ICP" Match="NavLinkMatch.All">
-                <span class="oi oi-info" aria-hidden="true"></span> ICP
+                <span class="oi oi-beaker" aria-hidden="true"></span> ICP
             </NavLink>
         </li>
         <li class="nav-item px-3">
             <NavLink class="nav-link" href="HM" Match="NavLinkMatch.All">
-                <span class="oi oi-info" aria-hidden="true"></span> Heavy Metals
+                <span class="oi oi-beaker" aria-hidden="true"></span> Heavy Metals
             </NavLink>
         </li>
         <li class="nav-item px-3">
             <NavLink class="nav-link" href="ReportFinal" Match="NavLinkMatch.All">
-                <span class="oi oi-info" aria-hidden="true"></span> Report Finalization
+                <span class="oi oi-layers" aria-hidden="true"></span> Report Finalization
             </NavLink>
         </li>
         }
@@ -42,17 +52,17 @@
         {
         <li class="nav-item px-3">
             <NavLink class="nav-link" href="SampleInfo" Match="NavLinkMatch.All">
-                <span class="oi oi-info" aria-hidden="true"></span> Sample Table
+                <span class="oi oi-list-rich" aria-hidden="true"></span> Sample Table
             </NavLink>
         </li>
         <li class="nav-item px-3">
             <NavLink class="nav-link" href="TestInfo" Match="NavLinkMatch.All">
-                <span class="oi oi-info" aria-hidden="true"></span> Test Table
+                <span class="oi oi-list-rich" aria-hidden="true"></span> Test Table
             </NavLink>
         </li>
         <li class="nav-item px-3">
             <NavLink class="nav-link" href="UserCreate" Match="NavLinkMatch.All">
-                <span class="oi oi-info" aria-hidden="true"></span> Create Users
+                <span class="oi oi-person" aria-hidden="true"></span> Create Users
             </NavLink>
         </li>
         }

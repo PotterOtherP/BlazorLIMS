@@ -2,7 +2,7 @@
 @using Microsoft.EntityFrameworkCore;
 @using BlazorLIMS.Data;
 
-<tr>
+<tr style="background-color: @BGColor;">
     <th>@Name</th>
     <th>@Type</th>
     <th>
@@ -29,6 +29,9 @@
 
     [Parameter]
     public string DefaultTests { get; set; }
+
+    [Parameter]
+    public string BGColor { get; set; }
 
     [Parameter]
     public EventCallback OnClickCallback { get; set; }

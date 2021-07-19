@@ -32,9 +32,11 @@
         </thead>
         @foreach(SampleModel smpl in @Report.Samples)
         {
+            var b = @Report.Samples.IndexOf(smpl) % 2 == 0;
             <GridSampleRow
             sample=@smpl
             Callback="@Refresh"
+            ColorIndex=@b
             />
         }
     </table>
