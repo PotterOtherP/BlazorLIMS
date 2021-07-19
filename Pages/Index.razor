@@ -5,6 +5,12 @@
 @using BlazorLIMS.Components;
 @using Microsoft.EntityFrameworkCore;
 
+@if (Info.CurrentUser.UserRole == Role.GUEST)
+{
+    <p><em>You are currently viewing this page as a guest. To see the other features
+        of this app, try logging in with "user" and "userpass" or "admin" and "adminpass".
+    </em></p>
+}
 
 <ReportCreationForm CreatedReport=@Report OnClickCallback="@Refresh"/>
 

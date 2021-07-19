@@ -1,5 +1,9 @@
 @page "/About"
 
+<div style="width: 80%">
+
+<h4>About This App</h4>
+
 <p>The Plant/Waste/Solution/Media Lab is a section of the Agronomic Division
    of the North Carolina Department of Agriculture and Consumer Services. The lab 
    performs nutrient analysis on several types of agricultural samples and provides
@@ -25,3 +29,49 @@
         <li>Academic and corporate researchers conducting controlled trials for publication or internal purposes</li>
         <li>Extension agents and NCDA agronomists providing state-funded support to the public</li>
     </ul>
+
+<p>This app is an independent personal project. The real NCDA & CS division website 
+    may be visited here:
+    <a target="blank" href="https://www.ncagr.gov/agronomi/">https://www.ncagr.gov/agronomi/</a></p>
+
+<h4>Instructions</h4>
+<p>To create a <a href="">new report</a>, choose a sample type and a report type, then pick
+    a particular crop name or sample code and the number of samples. Click "Create Grid"
+    and the sample rows will appear below. Unique lab IDs for the report and samples will be
+    automatically generated.
+    Within the sample rows, you can change crop type, edit tests assigned, and add comments.
+    Rows can be duplicated or deleted. When finished editing, click "Save Report to Worklist."
+    (You will need to be logged in, try logging in with "user" and "userpass" if you haven't already
+    done so.)
+</p>
+
+<p>In the <a href="Worklist">worklist</a>, values for assigned tests can be entered directly and are automatically
+    saved in the database. If ICP or Heavy Metals tests are assigned, an "O" will appear for an
+    incomplete entry. Fill in the data by going to the ICP and HM pages and entering values
+    manually or clicking "Read Data from Instrument" (this generates random values and simulates
+    reading the data directly from the instrument in the lab.) Again, all values are instantly saved.
+    Back in the worklist, an "X" will appear for completed ICP and HM tests.
+</p>
+<p>When all values for assigned tests have been entered, the report can be finalized.
+    Click on the blue word "Finalized" to remove that report from the worklist. You can
+    now add customer information and any final comment from the agronomist. The measured data
+    is displayed both as raw values and as a standardized sufficiency rating. Deficient (D) values are
+    colored blue and excessive (E) values are colored red. Low (L), Sufficient (S) and High (H)
+    are colored green. After clicking "Finish Report", a printable version will be accessible from
+    the <a href="ReportFinal">Report Finalization</a> page.
+</p>
+
+<h4>Admin Functions</h4>
+
+<p>Users who are logged in with admin privileges (try using "admin" and "adminpass") can 
+    create new types of samples, edit reference data, and add new registered users manually.
+    After logging in, click the newly visible links in the navigation menu on the left side
+    of the page.
+</p>
+<p>
+    Admins can also clear out the report database by going to the bottom of the worklist and
+    clicking "Delete All Reports". This will remove all saved reports and samples from the
+    database. Keep in mind, this action is irreversible...
+</p>
+
+</div>

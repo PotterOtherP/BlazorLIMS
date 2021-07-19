@@ -100,6 +100,9 @@ else
 
     private async void ReadRandomData() {
 
+        var rando = new Random();
+        double result = 0.0;
+
         using (var context = new PWSMDbContext())
         {
             foreach (var sample in ICPSamples)
@@ -112,8 +115,7 @@ else
                     if (!test.Name.Contains("ICP"))
                         continue;
 
-                    var rando = new Random();
-                    double result = rando.Next(5, 1000) * 1.0;
+                    result = rando.Next(5, 1000) * 1.0;
 
                     if (sample.SampleType.Equals("Plant"))
                     {

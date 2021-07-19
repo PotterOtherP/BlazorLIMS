@@ -2,13 +2,14 @@
 @using BlazorLIMS.Data;
 @using Microsoft.EntityFrameworkCore;
 
-<div style="display: flex; flex-direction: column; width: 30%">
+<div style="display: flex; flex-direction: column; width: 80%">
 
-<h1 style="margin: 20px">PWSM Lab Receiving</h1>
+<h1 style="margin: 0px 0px 40px 20px">PWSM Lab Receiving</h1>
 
-<div style="display: flex; flex-direction: row">
+<div style="display: flex; flex-direction: row; margin: 0px 0px 20px 20px;">
 
-<select value="@CreateSampleType" style="margin: 20px"
+<div>
+<select value="@CreateSampleType" style="margin: 0px 30px 20px 0px"
    @onchange="(ui) => MenuChange(ui.Value.ToString())">
     <option value="Plant">Plant</option>
     <option value="Waste">Waste</option>
@@ -16,7 +17,7 @@
     <option value="Media">Media</option>
 </select>
 
-<select @bind="CreateReportType" style="margin: 20px">
+<select @bind="CreateReportType" style="margin: 0px 30px 20px 0px">
     <option value="Predictive">Predictive</option>
     <option value="Diagnostic">Diagnostic</option>
     <option value="Research">Research</option>
@@ -24,13 +25,16 @@
     <option value="OutOfState">Out of State</option>
 </select>
 
-<input @bind="CreateReportDate" type="date" style="margin: 20px; width: 35%">
+<input @bind="CreateReportDate" type="date" style="margin: 0px 10px 20px 10px">
 
 </div>
 
-<div style="display: flex; flex-direction: row">
+</div>
 
-<select @bind="CreateSampleCode" style="margin: 20px">
+<div style="display: flex; flex-direction: row; margin: 0px 0px 20px 20px;">
+
+<div>
+<select @bind="CreateSampleCode" style="margin: 0px 10px 20px 0px">
     @{
         if (CreateSampleType == "Plant")
         {
@@ -66,12 +70,12 @@
     }
 </select>
 
-<input @bind="CreateNumberOfSamples" type="number" min="1" max="50" style="margin: 20px; width: 15%">
-
+<input @bind="CreateNumberOfSamples" type="number" min="1" max="50" style="margin-left: 20px; width: 100px;">
+</div>
 </div>
 
 
-<button @onclick="CreateReportFromForm" style="margin: 20px">Create Grid</button>
+<button @onclick="CreateReportFromForm" style="margin: 0px 0px 20px 20px; width: 100px;">Create Grid</button>
 
 </div>
 
