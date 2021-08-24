@@ -7,6 +7,10 @@ function sayHello() {
     console.log("Hello from our JS file!");
 }
 
+function consoleLog(str) {
+    console.log(str);
+}
+
 function toggleVisibility(name, value) {
 
     var element = document.getElementById(name);

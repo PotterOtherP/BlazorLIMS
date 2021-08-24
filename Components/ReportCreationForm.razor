@@ -2,6 +2,8 @@
 @using BlazorLIMS.Data;
 @using Microsoft.EntityFrameworkCore;
 
+@inject IJSRuntime runtime;
+
 <div style="display: flex; flex-direction: column; width: 80%">
 
 <h1 style="margin: 0px 0px 40px 20px">PWSM Lab Receiving</h1>
@@ -101,6 +103,9 @@
 
     private async void CreateReportFromForm() {
 
+        try {
+
+
         StateHasChanged();
 
         // Get next report number and sample numbers from database
@@ -133,8 +138,15 @@
 
             CreatedReport.Samples.Add(s);
         }
+            await runtime.InvokeVoidAsync("consoleLog", "No exception thrown.");
+            await OnClickCallback.InvokeAsync();
+        }
+        catch (Exception ex) {
+            string str = ex.Message;
+            Console.WriteLine(str);
+            await runtime.InvokeVoidAsync("consoleLog", "hello");
 
-        await OnClickCallback.InvokeAsync();
+        }
 
     }
 
